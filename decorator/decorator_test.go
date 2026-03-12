@@ -246,7 +246,6 @@ DeclStmt [Empty line before]`,
 GenDecl [Empty line before]`,
 		},
 		{
-
 			name: "TypeAssertExpr",
 			code: `package main
 			
@@ -645,7 +644,7 @@ var multiSpaces = regexp.MustCompile(" {2,}")
 
 func normalize(s string) string {
 	s = multiSpaces.ReplaceAllString(s, "")
-	s = strings.Replace(s, "\t", "", -1)
+	s = strings.ReplaceAll(s, "\t", "")
 	s = strings.TrimSpace(s)
 
 	return s

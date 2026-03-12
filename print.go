@@ -60,12 +60,12 @@ func fprint(w io.Writer, x any, f FieldFilter) (err error) {
 	if x == nil {
 		p.printf("nil\n")
 
-		return
+		return err
 	}
 	p.print(reflect.ValueOf(x))
 	p.printf("\n")
 
-	return
+	return err
 }
 
 // Print prints x to standard output, skipping nil fields.
@@ -93,18 +93,18 @@ func (p *printer) Write(data []byte) (n int, err error) {
 			m, err = p.output.Write(data[n : i+1])
 			n += m
 			if err != nil {
-				return
+				return n, err
 			}
 			p.line++
 		} else if p.last == '\n' {
 			_, err = fmt.Fprintf(p.output, "%6d  ", p.line)
 			if err != nil {
-				return
+				return n, err
 			}
 			for j := p.indent; j > 0; j-- {
 				_, err = p.output.Write(indent)
 				if err != nil {
-					return
+					return n, err
 				}
 			}
 		}
@@ -115,7 +115,7 @@ func (p *printer) Write(data []byte) (n int, err error) {
 		n += m
 	}
 
-	return
+	return n, err
 }
 
 // localError wraps locally caught errors so we can distinguish

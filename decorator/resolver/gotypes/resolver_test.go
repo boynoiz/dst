@@ -175,8 +175,8 @@ func TestDecoratorResolver(t *testing.T) {
 			}
 
 			for _, c := range test.cases {
-				//ast.Print(pkg.Fset, parents[c.id])
-				//ast.Print(pkg.Fset, nodes[c.id])
+				// ast.Print(pkg.Fset, parents[c.id])
+				// ast.Print(pkg.Fset, nodes[c.id])
 				path, err := res.ResolveIdent(nil, parents[c.id], parentFields[c.id], nodes[c.id])
 				if err != nil {
 					t.Error(err)

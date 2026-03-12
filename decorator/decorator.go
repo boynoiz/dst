@@ -140,10 +140,10 @@ func (d *Decorator) DecorateNode(n ast.Node) (dst.Node, error) {
 	}
 
 	// fmt.Println("\nFragments:")
-	//fd.debug(os.Stdout)
+	// fd.debug(os.Stdout)
 
 	// fmt.Println("\nDecorator:")
-	//debug(os.Stdout, out)
+	// debug(os.Stdout, out)
 
 	// Populate Info with filenames if we're decorating a File or Package.
 	switch n := n.(type) {

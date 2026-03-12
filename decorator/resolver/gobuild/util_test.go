@@ -5,7 +5,7 @@ import (
 	"go/build"
 	"go/format"
 	"io"
-	"io/ioutil"
+
 	"os"
 	"path/filepath"
 	"strings"
@@ -19,20 +19,20 @@ func buildContext(m map[string]string) (*build.Context, error) {
 	dir := filepath.Join(gopath, "src")
 
 	fs := memfs.New()
-	if err := fs.MkdirAll(dir, 0777); err != nil {
+	if err := fs.MkdirAll(dir, 0o777); err != nil {
 		return nil, err
 	}
 
 	for fpathrel, src := range m {
 		if strings.HasSuffix(fpathrel, "/") {
 			// just a dir
-			if err := fs.MkdirAll(filepath.Join(dir, fpathrel), 0777); err != nil {
+			if err := fs.MkdirAll(filepath.Join(dir, fpathrel), 0o777); err != nil {
 				return nil, err
 			}
 		} else {
 			fpath := filepath.Join(dir, fpathrel)
 			fdir, _ := filepath.Split(fpath)
-			if err := fs.MkdirAll(fdir, 0777); err != nil {
+			if err := fs.MkdirAll(fdir, 0o777); err != nil {
 				return nil, err
 			}
 
@@ -145,7 +145,7 @@ func buildContext(m map[string]string) (*build.Context, error) {
 
 		// ReadDir returns a slice of os.FileInfo, sorted by Name,
 		// describing the content of the named directory.
-		// If ReadDir is nil, Import uses ioutil.ReadDir.
+		// If ReadDir is nil, Import uses os.ReadDir.
 		ReadDir: func(name string) (fi []os.FileInfo, err error) {
 			if _, ok := hasSubDir(goroot, name); ok {
 				converted, err := convertGoroot(name)
@@ -153,7 +153,7 @@ func buildContext(m map[string]string) (*build.Context, error) {
 					return nil, err
 				}
 
-				return ioutil.ReadDir(converted)
+				return os.ReadDir(converted)
 			}
 
 			return fs.ReadDir(name)

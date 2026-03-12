@@ -51,7 +51,7 @@ func Apply(root dst.Node, pre, post ApplyFunc) (result dst.Node) {
 	a := &application{pre: pre, post: post}
 	a.apply(parent, "Node", nil, root)
 
-	return
+	return result
 }
 
 var abort = new(int) // singleton, to signal termination of Apply

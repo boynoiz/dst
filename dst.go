@@ -69,8 +69,8 @@ type Field struct {
 // A FieldList represents a list of Fields, enclosed by parentheses,
 // curly braces, or square brackets.
 type FieldList struct {
-	Decs    FieldListDecorations
 	List    []*Field // field list; or nil
+	Decs    FieldListDecorations
 	Opening bool
 	Closing bool
 }
@@ -134,10 +134,10 @@ type (
 
 	// A CompositeLit node represents a composite literal.
 	CompositeLit struct {
-		Type       Expr // literal type; or nil
-		Decs       CompositeLitDecorations
+		Type       Expr   // literal type; or nil
 		Elts       []Expr // list of composite elements; or nil
-		Incomplete bool   // true if (source) expressions are missing in the Elts list
+		Decs       CompositeLitDecorations
+		Incomplete bool // true if (source) expressions are missing in the Elts list
 	}
 
 	// A ParenExpr node represents a parenthesized expression.
@@ -189,9 +189,9 @@ type (
 
 	// A CallExpr node represents an expression followed by an argument list.
 	CallExpr struct {
-		Fun      Expr // function expression
-		Decs     CallExprDecorations
+		Fun      Expr   // function expression
 		Args     []Expr // function arguments; or nil
+		Decs     CallExprDecorations
 		Ellipsis bool
 	}
 
@@ -354,7 +354,7 @@ type (
 	//
 	BadStmt struct {
 		Decs   BadStmtDecorations
-		Length int // position range of bad statement
+		Length int // position range of a bad statement
 	}
 
 	// A DeclStmt node represents a declaration in a statement list.
@@ -405,9 +405,9 @@ type (
 	// a short variable declaration.
 	//
 	AssignStmt struct {
-		Decs AssignStmtDecorations
 		Lhs  []Expr
 		Rhs  []Expr
+		Decs AssignStmtDecorations
 		Tok  token.Token // assignment token, DEFINE
 	}
 
@@ -440,8 +440,8 @@ type (
 
 	// A BlockStmt node represents a braced statement list.
 	BlockStmt struct {
-		Decs           BlockStmtDecorations
 		List           []Stmt
+		Decs           BlockStmtDecorations
 		RbraceHasNoPos bool // Rbrace may be absent due to syntax error, so we duplicate this in the output for compatibility.
 	}
 
@@ -604,8 +604,8 @@ type (
 	//   token.VAR     *ValueSpec
 	//
 	GenDecl struct {
-		Decs   GenDeclDecorations
 		Specs  []Spec
+		Decs   GenDeclDecorations
 		Tok    token.Token // IMPORT, CONST, TYPE, or VAR
 		Lparen bool
 		Rparen bool
@@ -650,12 +650,12 @@ func (*FuncDecl) declNode() {}
 // are "free-floating" (see also issues #18593, #20744).
 type File struct {
 	Name       *Ident        // package name
-	Decls      []Decl        // top-level declarations; or nil
 	Scope      *Scope        // package scope (this file only)
+	GoVersion  string        // minimum Go version required by this file (e.g. "go1.21")
+	Decls      []Decl        // top-level declarations; or nil
 	Imports    []*ImportSpec // imports in this file
 	Unresolved []*Ident      // unresolved identifiers in this file
 	Decs       FileDecorations
-	GoVersion  string // minimum Go version required by this file (e.g. "go1.21")
 }
 
 // A Package node represents a set of source files

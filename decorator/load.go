@@ -3,7 +3,6 @@ package decorator
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -97,11 +96,11 @@ type Package struct {
 }
 
 func (p *Package) Save() error {
-	return p.save(gopackages.New(p.Dir), ioutil.WriteFile)
+	return p.save(gopackages.New(p.Dir), os.WriteFile)
 }
 
 func (p *Package) SaveWithResolver(resolver resolver.RestorerResolver) error {
-	return p.save(resolver, ioutil.WriteFile)
+	return p.save(resolver, os.WriteFile)
 }
 
 func (p *Package) save(resolver resolver.RestorerResolver, writeFile func(filename string, data []byte, perm os.FileMode) error) error {
@@ -111,7 +110,7 @@ func (p *Package) save(resolver resolver.RestorerResolver, writeFile func(filena
 		if err := r.Fprint(buf, file); err != nil {
 			return err
 		}
-		if err := writeFile(p.Decorator.Filenames[file], buf.Bytes(), 0666); err != nil {
+		if err := writeFile(p.Decorator.Filenames[file], buf.Bytes(), 0o666); err != nil {
 			return err
 		}
 	}

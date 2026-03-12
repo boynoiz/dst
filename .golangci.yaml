@@ -97,6 +97,7 @@ formatters:
     - gci
     - gofmt
     - gofumpt
+    - goimports
   settings:
     gci:
       sections:

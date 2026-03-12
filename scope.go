@@ -42,7 +42,7 @@ func (s *Scope) Insert(obj *Object) (alt *Object) {
 		s.Objects[obj.Name] = obj
 	}
 
-	return
+	return alt
 }
 
 // Debugging support.

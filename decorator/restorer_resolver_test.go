@@ -738,7 +738,6 @@ func TestRestorerResolver(t *testing.T) {
 						func main() { a.A(); fmt.Print(); bytes.Title([]byte{}); io.Copy(); b.B() }`,
 				},
 				{
-
 					name: "block-rearranged-spacing-fixed-delete-first-non-std",
 					desc: "when we delete the first non-std-lib import, the line-spacing is correct",
 					mutate: func(f *dst.File) {

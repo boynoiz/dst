@@ -367,5 +367,5 @@ func decorations(n dst.Node) (before, after dst.SpaceType, points []DecorationPo
 		points = append(points, DecorationPoint{"End", n.Decs.End})
 	}
 
-	return
+	return before, after, points
 }

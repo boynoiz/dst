@@ -24,7 +24,7 @@ func TestRestorerResolver(t *testing.T) {
 					"a/b/c": "d",
 				}
 
-				return
+				return end, r
 			},
 			cases: []tc{
 				{"a/b/c", "d"},

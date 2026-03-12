@@ -34,7 +34,7 @@ func TestRestorerResolver(t *testing.T) {
 				r = &gobuild.RestorerResolver{Context: bc}
 				root = "/gopath/src"
 
-				return
+				return end, root, r
 			},
 			cases: []tc{
 				{"a", "/main1", "a1"},

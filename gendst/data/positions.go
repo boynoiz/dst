@@ -5,12 +5,14 @@
 
 // --
 
-var a []int
-var i = 1
-var b bool
-var f any = 1
-var p = &i
-var c chan int
+var (
+	a []int
+	i = 1
+	b bool
+	f any = 1
+	p     = &i
+	c chan int
+)
 
 // Field.
 type A struct {
@@ -237,19 +239,19 @@ A /*Label*/ : /*Colon*/
 	} /*End*/
 
 	// ValueSpec(0)
-	var (
-		/*Start*/ j = /*Assign*/ 1 /*End*/
-	)
+
+	/*Start*/
+	j := /*Assign*/ 1 /*End*/
 
 	// ValueSpec(1)
-	var (
-		/*Start*/ k, l = /*Assign*/ 1, 2 /*End*/
-	)
+
+	/*Start*/
+	k, l := /*Assign*/ 1, 2 /*End*/
 
 	// ValueSpec(2)
-	var (
-		/*Start*/ m, n = /*Assign*/ 1, 2 /*End*/
-	)
+
+	/*Start*/
+	m, n := /*Assign*/ 1, 2 /*End*/
 
 	// --
 
@@ -314,7 +316,7 @@ func /*Func*/ (a *A) /*Recv*/ e /*Name*/ (d, e int) /*Params*/ {
 // FuncDecl(3)
 /*Start.*/
 func /*Func*/ (a *A) /*Recv*/ f /*Name*/ (d, e int) /*Params*/ (f, g int) /*Results*/ {
-	return
+	return f, g
 } /*End*/
 
 // --

@@ -24,48 +24,60 @@ var tests = []struct {
 
 	// maps
 	{map[Expr]string{}, `0  map[dst.Expr]string (len = 0) {}`},
-	{map[string]int{"a": 1},
+	{
+		map[string]int{"a": 1},
 		`0  map[string]int (len = 1) {
 		1  .  "a": 1
-		2  }`},
+		2  }`,
+	},
 
 	// pointers
 	{new(int), "0  *0"},
 
 	// arrays
 	{[0]int{}, `0  [0]int {}`},
-	{[3]int{1, 2, 3},
+	{
+		[3]int{1, 2, 3},
 		`0  [3]int {
 		1  .  0: 1
 		2  .  1: 2
 		3  .  2: 3
-		4  }`},
-	{[...]int{42},
+		4  }`,
+	},
+	{
+		[...]int{42},
 		`0  [1]int {
 		1  .  0: 42
-		2  }`},
+		2  }`,
+	},
 
 	// slices
 	{[]int{}, `0  []int (len = 0) {}`},
-	{[]int{1, 2, 3},
+	{
+		[]int{1, 2, 3},
 		`0  []int (len = 3) {
 		1  .  0: 1
 		2  .  1: 2
 		3  .  2: 3
-		4  }`},
+		4  }`,
+	},
 
 	// structs
 	{struct{}{}, `0  struct {} {}`},
-	{struct{ x int }{007}, `0  struct { x int } {}`},
-	{struct{ X, y int }{42, 991},
+	{struct{ x int }{0o07}, `0  struct { x int } {}`},
+	{
+		struct{ X, y int }{42, 991},
 		`0  struct { X int; y int } {
 		1  .  X: 42
-		2  }`},
-	{struct{ X, Y int }{42, 991},
+		2  }`,
+	},
+	{
+		struct{ X, Y int }{42, 991},
 		`0  struct { X int; Y int } {
 		1  .  X: 42
 		2  .  Y: 991
-		3  }`},
+		3  }`,
+	},
 }
 
 // Split s into lines, trim whitespace from all lines, and return

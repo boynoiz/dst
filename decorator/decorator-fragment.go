@@ -413,7 +413,7 @@ func (f *fileDecorator) attachToDecoration(frags []fragment, decorations map[ast
 	}
 }
 
-func (f *fileDecorator) findDecoration(stopAtNewline, stopAtEmptyLine bool, from int, direction int, onlyClause bool) (swept []fragment, dec *decorationFragment, found bool) {
+func (f *fileDecorator) findDecoration(stopAtNewline, stopAtEmptyLine bool, from, direction int, onlyClause bool) (swept []fragment, dec *decorationFragment, found bool) {
 	var frags []fragment
 	for i := from; i < len(f.fragments) && i >= 0; i += direction {
 		switch current := f.fragments[i].(type) {
@@ -425,19 +425,19 @@ func (f *fileDecorator) findDecoration(stopAtNewline, stopAtEmptyLine bool, from
 						return frags, current, true
 					}
 
-					return
+					return swept, dec, found
 				default:
-					return
+					return swept, dec, found
 				}
 			}
 
 			return frags, current, true
 		case *newlineFragment:
 			if stopAtNewline {
-				return
+				return swept, dec, found
 			}
 			if stopAtEmptyLine && current.Empty {
-				return
+				return swept, dec, found
 			}
 			if current.Attached != nil {
 				continue
@@ -457,14 +457,14 @@ func (f *fileDecorator) findDecoration(stopAtNewline, stopAtEmptyLine bool, from
 				frags = append([]fragment{current}, frags...)
 			}
 		case *tokenFragment, *stringFragment:
-			return
+			return swept, dec, found
 		}
 	}
 
-	return
+	return swept, dec, found
 }
 
-func (f *fileDecorator) findNode(from int, direction int) (node ast.Node, dec *decorationFragment, found bool) {
+func (f *fileDecorator) findNode(from, direction int) (node ast.Node, dec *decorationFragment, found bool) {
 	var name string
 	switch direction {
 	case 1:
@@ -480,7 +480,7 @@ func (f *fileDecorator) findNode(from int, direction int) (node ast.Node, dec *d
 				return frag.Node, frag, true
 			}
 
-			return
+			return node, dec, found
 		case *commentFragment:
 			if frag.Attached != nil && frag.Attached.Name == name {
 				return frag.Attached.Node, frag.Attached, true
@@ -490,11 +490,11 @@ func (f *fileDecorator) findNode(from int, direction int) (node ast.Node, dec *d
 				return frag.Attached.Node, frag.Attached, true
 			}
 		case *tokenFragment, *stringFragment:
-			return
+			return node, dec, found
 		}
 	}
 
-	return
+	return node, dec, found
 }
 
 func (f *fileDecorator) findIndentedComments(from int, indents [2]int) (frags [2][]fragment, nextDecoration *decorationFragment) {
@@ -520,21 +520,21 @@ func (f *fileDecorator) findIndentedComments(from int, indents [2]int) (frags [2
 					if current.Indent == indents[1] {
 						stage = 1
 					} else {
-						return
+						return frags, nextDecoration
 					}
 				}
 			case 1:
 				if current.Indent != indents[1] {
-					return
+					return frags, nextDecoration
 				}
 			}
 			frags[stage] = append(frags[stage], current)
 		case *tokenFragment, *stringFragment:
-			return
+			return frags, nextDecoration
 		}
 	}
 
-	return
+	return frags, nextDecoration
 }
 
 type fragment interface {

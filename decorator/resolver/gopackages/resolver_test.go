@@ -35,7 +35,7 @@ func TestRestorerResolver(t *testing.T) {
 				end = func() { os.RemoveAll(root) }
 				r = &gopackages.RestorerResolver{}
 
-				return
+				return end, root, r
 			},
 			cases: []tc{
 				{"root/foo", "/main", "foo"},

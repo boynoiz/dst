@@ -100,7 +100,7 @@ func TestPositions(t *testing.T) {
 			}
 		}
 		if fmt.Sprintf("%T", n) == currentNodeType {
-			//fmt.Printf("*** Testing %s (%d)\n", currentNodeType, currentTestIndex)
+			// fmt.Printf("*** Testing %s (%d)\n", currentNodeType, currentTestIndex)
 			_, _, points := dstutil.Decorations(n)
 			for _, point := range points {
 				for _, text := range point.Decs {

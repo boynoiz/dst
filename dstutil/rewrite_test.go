@@ -25,7 +25,8 @@ var rewriteTests = [...]struct {
 }{
 	{name: "nop", orig: "package p\n", want: "package p\n"},
 
-	{name: "replace",
+	{
+		name: "replace",
 		orig: `package p
 
 var x int
@@ -45,7 +46,8 @@ var t T
 		},
 	},
 
-	{name: "set doc strings",
+	{
+		name: "set doc strings",
 		orig: `package p
 
 const z = 0
@@ -74,7 +76,8 @@ var x int
 		},
 	},
 
-	{name: "insert names",
+	{
+		name: "insert names",
 		orig: `package p
 
 const a = 1
@@ -99,7 +102,8 @@ const a, b, c = 1, 2, 3
 		},
 	},
 
-	{name: "insert",
+	{
+		name: "insert",
 		orig: `package p
 
 var (
@@ -131,7 +135,8 @@ var after1 int
 		},
 	},
 
-	{name: "delete",
+	{
+		name: "delete",
 		orig: `package p
 
 var x int
@@ -153,7 +158,8 @@ var z int
 		},
 	},
 
-	{name: "insertafter-delete",
+	{
+		name: "insertafter-delete",
 		orig: `package p
 
 var x int
@@ -177,7 +183,8 @@ var z int
 		},
 	},
 
-	{name: "delete-insertafter",
+	{
+		name: "delete-insertafter",
 		orig: `package p
 
 var x int
@@ -204,8 +211,9 @@ var z int
 }
 
 func valspec(name, typ string) *dst.ValueSpec {
-	return &dst.ValueSpec{Names: []*dst.Ident{dst.NewIdent(name)},
-		Type: dst.NewIdent(typ),
+	return &dst.ValueSpec{
+		Names: []*dst.Ident{dst.NewIdent(name)},
+		Type:  dst.NewIdent(typ),
 	}
 }
 

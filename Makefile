@@ -144,16 +144,9 @@ fix:
 	@$(GOCMD) fix $(GO_SOURCE)/...
 	@echo "Fix completed"
 
-# Fix struct field alignment
-.PHONY: field-align
-field-align:
-	@echo "Fixing struct field alignment..."
-	@fieldalignment -fix $(GO_SOURCE)/... | true
-	@echo "Field alignment completed"
-
 # Complete quality assurance
 .PHONY: qa
-qa: tidy fmt fix lint-fix vet vuln-check field-align test
+qa: tidy fmt fix lint-fix vet vuln-check test
 
 # CI-specific quality checks (no fixing)
 .PHONY: qa-ci
@@ -168,4 +161,4 @@ fmt-check:
 
 
 # Make sure these aren't treated as files
-.PHONY: test test-unit test-all test-ci deps tidy install run tools-install fmt fmt-check lint lint-fix vet fix vuln-check field-align qa qa-ci
+.PHONY: test test-unit test-all test-ci deps tidy install run tools-install fmt fmt-check lint lint-fix vet fix vuln-check qa qa-ci

@@ -12,19 +12,19 @@ import (
 
 func tempDir(m map[string]string) (dir string, err error) {
 	if dir, err = os.MkdirTemp("", ""); err != nil {
-		return
+		return dir, err
 	}
 	for fpathrel, src := range m {
 		if strings.HasSuffix(fpathrel, "/") {
 			// just a dir
-			if err = os.MkdirAll(filepath.Join(dir, fpathrel), 0777); err != nil {
-				return
+			if err = os.MkdirAll(filepath.Join(dir, fpathrel), 0o777); err != nil {
+				return dir, err
 			}
 		} else {
 			fpath := filepath.Join(dir, fpathrel)
 			fdir, _ := filepath.Split(fpath)
-			if err = os.MkdirAll(fdir, 0777); err != nil {
-				return
+			if err = os.MkdirAll(fdir, 0o777); err != nil {
+				return dir, err
 			}
 
 			var formatted []byte
@@ -33,19 +33,19 @@ func tempDir(m map[string]string) (dir string, err error) {
 				if err != nil {
 					err = fmt.Errorf("formatting %s: %w", fpathrel, err)
 
-					return
+					return dir, err
 				}
 			} else {
 				formatted = []byte(src)
 			}
 
-			if err = os.WriteFile(fpath, formatted, 0666); err != nil {
-				return
+			if err = os.WriteFile(fpath, formatted, 0o666); err != nil {
+				return dir, err
 			}
 		}
 	}
 
-	return
+	return dir, err
 }
 
 func compareDir(t *testing.T, dir string, expect map[string]string) {

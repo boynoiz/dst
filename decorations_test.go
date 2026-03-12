@@ -326,23 +326,23 @@ func Example_decorationPoints() {
 		before, after, points := dstutil.Decorations(node)
 		var info strings.Builder
 		if before != dst.None {
-			info.WriteString(fmt.Sprintf("- Before: %s\n", before))
+			fmt.Fprintf(&info, "- Before: %s\n", before)
 		}
 		for _, point := range points {
 			if len(point.Decs) == 0 {
 				continue
 			}
-			info.WriteString(fmt.Sprintf("- %s: [", point.Name))
+			fmt.Fprintf(&info, "- %s: [", point.Name)
 			for i, dec := range point.Decs {
 				if i > 0 {
 					info.WriteString(", ")
 				}
-				info.WriteString(fmt.Sprintf("%q", dec))
+				fmt.Fprintf(&info, "%q", dec)
 			}
 			info.WriteString("]\n")
 		}
 		if after != dst.None {
-			info.WriteString(fmt.Sprintf("- After: %s\n", after))
+			fmt.Fprintf(&info, "- After: %s\n", after)
 		}
 		if info.String() != "" {
 			fmt.Printf("%T\n%s\n", node, info.String())

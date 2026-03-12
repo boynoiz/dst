@@ -20,7 +20,6 @@ func TestRestorerFunc(t *testing.T) {
 		skip   bool
 		solo   bool
 	}{
-
 		{
 			name: "func-decl-edge-case",
 			code: `package a
