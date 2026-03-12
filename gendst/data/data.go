@@ -1232,7 +1232,7 @@ var Info = map[string][]Part{
 		}
 	*/
 	///*Start*/
-	//	c /*Chan*/ <- /*Arrow*/ 0 /*End*/
+	//   c /*Chan*/ <- /*Arrow*/ 0 /*End*/
 	"SendStmt": {
 		Decoration{
 			Name: "Start",
@@ -2079,10 +2079,10 @@ var Info = map[string][]Part{
 		//
 		// Relationship between Tok value and Specs element type:
 		//
-		//	token.IMPORT  *ImportSpec
-		//	token.CONST   *ValueSpec
-		//	token.TYPE    *TypeSpec
-		//	token.VAR     *ValueSpec
+		//   token.IMPORT  *ImportSpec
+		//   token.CONST   *ValueSpec
+		//   token.TYPE    *TypeSpec
+		//   token.VAR     *ValueSpec
 		//
 		GenDecl struct {
 			Doc    *CommentGroup // associated documentation; or nil
@@ -2278,16 +2278,17 @@ var Info = map[string][]Part{
 		// and Comment comments directly associated with nodes, the remaining comments
 		// are "free-floating" (see also issues #18593, #20744).
 		//
-		type File struct {
-			Doc        *CommentGroup   // associated documentation; or nil
-			Package    token.Pos       // position of "package" keyword
-			Name       *Ident          // package name
-			Decls      []Decl          // top-level declarations; or nil
-			Scope      *Scope          // package scope (this file only)
-			Imports    []*ImportSpec   // imports in this file
-			Unresolved []*Ident        // unresolved identifiers in this file
-			Comments   []*CommentGroup // list of all comments in the source file
-		}
+		// type File struct {
+		//   Doc        *CommentGroup   // associated documentation; or nil
+		//   Package    token.Pos       // position of "package" keyword
+		//   Name       *Ident          // package name
+		//   Decls      []Decl          // top-level declarations; or nil
+		//   Scope      *Scope          // package scope (this file only)
+		//   Imports    []*ImportSpec   // imports in this file
+		//   Unresolved []*Ident        // unresolved identifiers in this file
+		//   Comments   []*CommentGroup // list of all comments in the source file
+		//   GoVersion  string          // minimum Go version required by this file (e.g. "go1.21")
+		// }
 	*/
 	// TODO: File.Unresolved?
 	"File": {
@@ -2330,17 +2331,21 @@ var Info = map[string][]Part{
 			Elem:      Struct{"ImportSpec"},
 			NoRestore: true,
 		},
+		Value{
+			Name:  "GoVersion",
+			Field: Field{"GoVersion"},
+		},
 	},
 	/*
 		// A Package node represents a set of source files
 		// collectively building a Go package.
 		//
-		type Package struct {
-			Name    string             // package name
-			Scope   *Scope             // package scope across all files
-			Imports map[string]*Object // map of package id -> package object
-			Files   map[string]*File   // Go source files by filename
-		}
+		// type Package struct {
+		//   Name    string             // package name
+		//   Scope   *Scope             // package scope across all files
+		//   Imports map[string]*Object // map of package id -> package object
+		//   Files   map[string]*File   // Go source files by filename
+		// }
 	*/
 	"Package": {
 		Value{
