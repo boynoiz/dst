@@ -11,18 +11,21 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/dave/dst"
-	"github.com/dave/dst/decorator/resolver/gopackages"
 	"golang.org/x/tools/go/packages"
+
+	"github.com/boynoiz/dst"
+	"github.com/boynoiz/dst/decorator/resolver/gopackages"
 )
 
 func TestRestorerResolver(t *testing.T) {
 	type tc struct {
-		skip, solo bool
-		name, desc string
-		mutate     func(f *dst.File)
-		restorer   func(r *FileRestorer)
-		expect     string
+		mutate   func(f *dst.File)
+		restorer func(r *FileRestorer)
+		name     string
+		desc     string
+		expect   string
+		skip     bool
+		solo     bool
 	}
 	tests := []struct {
 		name  string
@@ -135,7 +138,6 @@ func TestRestorerResolver(t *testing.T) {
 					name: "cgo",
 					desc: "if cgo import is found (manually added here), and import is added, it will create a new block below cgo",
 					mutate: func(f *dst.File) {
-
 						cgo := &dst.GenDecl{
 							Tok: token.IMPORT,
 							Specs: []dst.Spec{
@@ -216,7 +218,6 @@ func TestRestorerResolver(t *testing.T) {
 					name: "add-c",
 					desc: "if C import is found as part of another block, it is ignored and ordered first",
 					mutate: func(f *dst.File) {
-
 						firstBlock := f.Decls[0].(*dst.GenDecl)
 						firstBlock.Specs = append(firstBlock.Specs, &dst.ImportSpec{Path: &dst.BasicLit{Kind: token.STRING, Value: strconv.Quote("C")}})
 
@@ -1072,6 +1073,7 @@ func TestRestorerResolver(t *testing.T) {
 		for _, c := range test.cases {
 			if c.solo {
 				solo = true
+
 				break
 			}
 			if solo {
@@ -1131,6 +1133,7 @@ func TestRestorerResolver(t *testing.T) {
 						if err != nil {
 							t.Fatal(err)
 						}
+
 						break
 					}
 				}
@@ -1164,7 +1167,6 @@ func TestRestorerResolver(t *testing.T) {
 				if buf.String() != string(expected) {
 					t.Errorf("expect: %s \n\n found: %s \n\n diff:\n%s", string(expected), buf.String(), diff(string(expected), buf.String()))
 				}
-
 			})
 		}
 	}
@@ -1184,9 +1186,10 @@ func TestPackageOrder(t *testing.T) {
 
 func TestRestorerDecorationResolver(t *testing.T) {
 	tests := []struct {
-		skip, solo bool
-		name       string
-		src        map[string]string
+		src  map[string]string
+		name string
+		skip bool
+		solo bool
 	}{
 		{
 			name: "sel",
@@ -1449,6 +1452,7 @@ func TestRestorerDecorationResolver(t *testing.T) {
 	for _, test := range tests {
 		if test.solo {
 			solo = true
+
 			break
 		}
 	}
@@ -1509,6 +1513,7 @@ func TestRestorerDecorationResolver(t *testing.T) {
 					if err != nil {
 						t.Fatal(err)
 					}
+
 					break
 				}
 			}

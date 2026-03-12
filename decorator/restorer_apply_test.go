@@ -6,15 +6,15 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/dave/dst"
-	"github.com/dave/dst/decorator/resolver/guess"
-	"github.com/dave/dst/dstutil"
+	"github.com/boynoiz/dst"
+	"github.com/boynoiz/dst/decorator/resolver/guess"
+	"github.com/boynoiz/dst/dstutil"
 )
 
 func TestApply(t *testing.T) {
 	testPackageRestoresCorrectlyWithApplyClone(
 		t,
-		"github.com/dave/dst/gendst/data",
+		"github.com/boynoiz/dst/gendst/data",
 		"fmt",
 		"bytes",
 		"io",
@@ -35,18 +35,15 @@ func testPackageRestoresCorrectlyWithApplyClone(t *testing.T, path ...string) {
 			t.Fatalf("Package %s has no syntax", p.PkgPath)
 		}
 		t.Run(p.PkgPath, func(t *testing.T) {
-
 			r := NewRestorer()
 			r.Path = p.PkgPath
 			r.Resolver = &guess.RestorerResolver{}
 
 			for _, file := range p.Syntax {
-
 				fpath := p.Decorator.Filenames[file]
 				_, fname := filepath.Split(fpath)
 
 				t.Run(fname, func(t *testing.T) {
-
 					cloned1 := dst.Clone(file).(*dst.File)
 					cloned2 := dst.Clone(file).(*dst.File)
 
@@ -57,6 +54,7 @@ func testPackageRestoresCorrectlyWithApplyClone(t *testing.T, path ...string) {
 							n1.Decorations().End.Replace(fmt.Sprintf("/* %s */", n.Name))
 							c.Replace(n1)
 						}
+
 						return true
 					}, nil).(*dst.File)
 
@@ -66,6 +64,7 @@ func testPackageRestoresCorrectlyWithApplyClone(t *testing.T, path ...string) {
 						case *dst.Ident:
 							n.Decorations().End.Replace(fmt.Sprintf("/* %s */", n.Name))
 						}
+
 						return true
 					})
 

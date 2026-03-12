@@ -1,0 +1,122 @@
+version: "2"
+run:
+  concurrency: 8
+linters:
+  default: none
+  enable:
+    # Correctness
+    - bodyclose
+    - copyloopvar
+    - errcheck
+    - errchkjson
+    - errname
+    - errorlint
+    - fatcontext
+    - forcetypeassert
+    - ineffassign
+    - makezero
+    - nilnil
+    - noctx
+    - nilerr
+    - reassign
+    - sqlclosecheck
+    - unconvert
+    - unused
+    # Security
+    - gosec
+    # Style + quality
+    - err113
+    - gocritic
+    - govet
+    - prealloc
+    - promlinter      # keep — you scaffold Prometheus metrics
+    - misspell        # keep — catches real typos
+    - staticcheck
+    - importas
+    # Complexity (keep reasonable limits)
+    - cyclop
+    - gocognit
+  settings:
+    govet:
+      enable-all: true   # includes fieldalignment, shadow, etc.
+      settings:
+        shadow:
+          strict: false
+    cyclop:
+      max-complexity: 10
+    gocognit:
+      min-complexity: 50
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - style
+    gosec:
+      excludes:
+        - G101   # hardcoded credentials (false positive for config field names)
+        - G115   # integer overflow (too noisy)
+        - G204   # subprocess with variable (legitimate in CLI tools)
+    staticcheck:
+      checks:
+        - all
+        - -ST1000  # package comments
+        - -ST1003  # naming (too opinionated)
+        - -ST1005  # error string capitalization
+        - -SA1019  # deprecated usage (too noisy during migrations)
+    reassign:
+      patterns:
+        - .*
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - path: _test\.go
+        linters:
+          - cyclop
+          - gocognit
+          - dupl
+          - goconst
+          - nestif
+          - forcetypeassert
+          - errcheck
+          - gocritic
+          - gosec
+          - prealloc
+          - err113
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+      - .*mock.*
+      - .*_mock.*
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(github.com/boynoiz/dst)
+        - blank
+        - dot
+        - alias
+        - localmodule
+      no-inline-comments: false
+      no-prefix-comments: false
+      custom-order: true
+      no-lex-order: true
+    gofumpt:
+      module-path: github.com/boynoiz/dst
+      extra-rules: true
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

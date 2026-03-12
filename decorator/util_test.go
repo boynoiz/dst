@@ -3,7 +3,6 @@ package decorator
 import (
 	"fmt"
 	"go/format"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -12,7 +11,7 @@ import (
 )
 
 func tempDir(m map[string]string) (dir string, err error) {
-	if dir, err = ioutil.TempDir("", ""); err != nil {
+	if dir, err = os.MkdirTemp("", ""); err != nil {
 		return
 	}
 	for fpathrel, src := range m {
@@ -32,18 +31,20 @@ func tempDir(m map[string]string) (dir string, err error) {
 			if strings.HasSuffix(fpath, ".go") {
 				formatted, err = format.Source([]byte(src))
 				if err != nil {
-					err = fmt.Errorf("formatting %s: %v", fpathrel, err)
+					err = fmt.Errorf("formatting %s: %w", fpathrel, err)
+
 					return
 				}
 			} else {
 				formatted = []byte(src)
 			}
 
-			if err = ioutil.WriteFile(fpath, formatted, 0666); err != nil {
+			if err = os.WriteFile(fpath, formatted, 0666); err != nil {
 				return
 			}
 		}
 	}
+
 	return
 }
 
@@ -58,11 +59,12 @@ func compareDir(t *testing.T, dir string, expect map[string]string) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		b, err := ioutil.ReadFile(fpath)
+		b, err := os.ReadFile(fpath)
 		if err != nil {
 			t.Fatal(err)
 		}
 		found[relfpath] = string(b)
+
 		return nil
 	}
 	if err := filepath.Walk(dir, walk); err != nil {

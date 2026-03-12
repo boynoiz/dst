@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 
-	"github.com/dave/dst/gendst/data"
 	. "github.com/dave/jennifer/jen"
+
+	"github.com/boynoiz/dst/gendst/data"
 )
 
 // notest
 
 func generateRestorer(names []string) error {
-
 	f := NewFile("decorator")
 	f.ImportName(DSTPATH, "dst")
 	// func (r *restorer) restoreNode(n dst.Node, allowDuplicate bool) ast.Node {

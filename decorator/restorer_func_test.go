@@ -5,18 +5,20 @@ import (
 	"go/format"
 	"testing"
 
-	"github.com/dave/dst"
-	"github.com/dave/dst/dstutil"
+	"github.com/boynoiz/dst"
+	"github.com/boynoiz/dst/dstutil"
 )
 
 func TestRestorerFunc(t *testing.T) {
 	tests := []struct {
-		skip, solo bool
-		name       string
-		code       string
-		f          func(*dst.File)
-		pre, post  func(*dstutil.Cursor) bool
-		expect     string
+		f      func(*dst.File)
+		pre    func(*dstutil.Cursor) bool
+		post   func(*dstutil.Cursor) bool
+		name   string
+		code   string
+		expect string
+		skip   bool
+		solo   bool
 	}{
 
 		{
@@ -103,6 +105,7 @@ var j /*b*/ int`,
 						n.Name = "j"
 					}
 				}
+
 				return true
 			},
 			expect: `package a
@@ -114,6 +117,7 @@ var j /*b*/ int`,
 	for _, test := range tests {
 		if test.solo {
 			solo = true
+
 			break
 		}
 	}

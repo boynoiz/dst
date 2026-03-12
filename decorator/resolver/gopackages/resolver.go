@@ -3,8 +3,9 @@ package gopackages
 import (
 	"fmt"
 
-	"github.com/dave/dst/decorator/resolver"
 	"golang.org/x/tools/go/packages"
+
+	"github.com/boynoiz/dst/decorator/resolver"
 )
 
 func New(dir string) *RestorerResolver {
@@ -20,15 +21,12 @@ func WithHints(dir string, hints map[string]string) *RestorerResolver {
 }
 
 type RestorerResolver struct {
-	Dir    string
 	Config packages.Config
-
-	// Hints (package path -> name) is first checked before asking the packages package
-	Hints map[string]string
+	Hints  map[string]string
+	Dir    string
 }
 
 func (r *RestorerResolver) ResolvePackage(path string) (string, error) {
-
 	if name, ok := r.Hints[path]; ok {
 		return name, nil
 	}

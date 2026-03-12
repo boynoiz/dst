@@ -3,9 +3,10 @@ package decorator
 import (
 	"testing"
 
-	"github.com/dave/dst"
-	"github.com/dave/dst/decorator/resolver/simple"
 	"golang.org/x/tools/go/packages"
+
+	"github.com/boynoiz/dst"
+	"github.com/boynoiz/dst/decorator/resolver/simple"
 )
 
 func TestLoad(t *testing.T) {
@@ -50,6 +51,7 @@ func TestLoad(t *testing.T) {
 				case *dst.CallExpr:
 					n.Decorations().End.Append("// a")
 				}
+
 				return true
 			})
 		}

@@ -20,9 +20,10 @@ type FieldFilter func(name string, value reflect.Value) bool
 // it returns false otherwise.
 func NotNilFilter(_ string, v reflect.Value) bool {
 	switch v.Kind() {
-	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Pointer, reflect.Slice:
 		return !v.IsNil()
 	}
+
 	return true
 }
 
@@ -35,16 +36,16 @@ func NotNilFilter(_ string, v reflect.Value) bool {
 // struct fields for which f(fieldname, fieldvalue) is true are
 // printed; all others are filtered from the output. Unexported
 // struct fields are never printed.
-func Fprint(w io.Writer, x interface{}, f FieldFilter) error {
+func Fprint(w io.Writer, x any, f FieldFilter) error {
 	return fprint(w, x, f)
 }
 
-func fprint(w io.Writer, x interface{}, f FieldFilter) (err error) {
+func fprint(w io.Writer, x any, f FieldFilter) (err error) {
 	// setup printer
 	p := printer{
 		output: w,
 		filter: f,
-		ptrmap: make(map[interface{}]int),
+		ptrmap: make(map[any]int),
 		last:   '\n', // force printing of line number on first line
 	}
 
@@ -58,6 +59,7 @@ func fprint(w io.Writer, x interface{}, f FieldFilter) (err error) {
 	// print x
 	if x == nil {
 		p.printf("nil\n")
+
 		return
 	}
 	p.print(reflect.ValueOf(x))
@@ -68,17 +70,17 @@ func fprint(w io.Writer, x interface{}, f FieldFilter) (err error) {
 
 // Print prints x to standard output, skipping nil fields.
 // Print(fset, x) is the same as Fprint(os.Stdout, fset, x, NotNilFilter).
-func Print(x interface{}) error {
+func Print(x any) error {
 	return Fprint(os.Stdout, x, NotNilFilter)
 }
 
 type printer struct {
 	output io.Writer
 	filter FieldFilter
-	ptrmap map[interface{}]int // *T -> line number
-	indent int                 // current indentation level
-	last   byte                // the last byte processed by Write
-	line   int                 // current line number
+	ptrmap map[any]int // *T -> line number
+	indent int         // current indentation level
+	last   byte        // the last byte processed by Write
+	line   int         // current line number
 }
 
 var indent = []byte(".  ")
@@ -112,6 +114,7 @@ func (p *printer) Write(data []byte) (n int, err error) {
 		m, err = p.output.Write(data[n:])
 		n += m
 	}
+
 	return
 }
 
@@ -122,7 +125,7 @@ type localError struct {
 }
 
 // printf is a convenience wrapper that takes care of print errors.
-func (p *printer) printf(format string, args ...interface{}) {
+func (p *printer) printf(format string, args ...any) {
 	if _, err := fmt.Fprintf(p, format, args...); err != nil {
 		panic(localError{err})
 	}
@@ -140,6 +143,7 @@ func (p *printer) printf(format string, args ...interface{}) {
 func (p *printer) print(x reflect.Value) {
 	if !NotNilFilter("", x) {
 		p.printf("nil")
+
 		return
 	}
 
@@ -162,7 +166,7 @@ func (p *printer) print(x reflect.Value) {
 		}
 		p.printf("}")
 
-	case reflect.Ptr:
+	case reflect.Pointer:
 		p.printf("*")
 		// type-checked ASTs may contain cycles - use ptrmap
 		// to keep track of objects that have been printed
@@ -192,6 +196,7 @@ func (p *printer) print(x reflect.Value) {
 	case reflect.Slice:
 		if s, ok := x.Interface().([]byte); ok {
 			p.printf("%#q", s)
+
 			return
 		}
 		p.printf("%s (len = %d) {", x.Type(), x.Len())
@@ -237,6 +242,7 @@ func (p *printer) print(x reflect.Value) {
 		case string:
 			// print strings in quotes
 			p.printf("%q", v)
+
 			return
 		}
 		// default

@@ -12,10 +12,11 @@ import (
 
 func TestFragment(t *testing.T) {
 	tests := []struct {
-		skip, solo bool
-		name       string
-		code       string
-		expect     string
+		name   string
+		code   string
+		expect string
+		skip   bool
+		solo   bool
 	}{
 		{
 			name: "index list expr",
@@ -361,6 +362,7 @@ func A[B any, C int | int64](b B) C {
 	for _, test := range tests {
 		if test.solo {
 			solo = true
+
 			break
 		}
 	}
@@ -410,5 +412,6 @@ func A[B any, C int | int64](b B) C {
 
 func diff(expect, found string) string {
 	dmp := diffmatchpatch.New()
+
 	return dmp.DiffPrettyText(dmp.DiffMain(expect, found, false))
 }

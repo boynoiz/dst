@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/dave/dst/decorator/resolver"
-	"github.com/dave/dst/decorator/resolver/guess"
+	"github.com/boynoiz/dst/decorator/resolver"
+	"github.com/boynoiz/dst/decorator/resolver/guess"
 )
 
 func New() *DecoratorResolver {
@@ -26,12 +26,11 @@ func WithResolver(resolver resolver.RestorerResolver) *DecoratorResolver {
 // capable ident resolver.
 type DecoratorResolver struct {
 	RestorerResolver resolver.RestorerResolver
-	filesM           sync.Mutex
 	files            map[*ast.File]map[string]string
+	filesM           sync.Mutex
 }
 
 func (r *DecoratorResolver) ResolveIdent(file *ast.File, parent ast.Node, parentField string, id *ast.Ident) (string, error) {
-
 	if r.RestorerResolver == nil {
 		r.RestorerResolver = guess.New()
 	}
@@ -89,14 +88,17 @@ func (r *DecoratorResolver) imports(file *ast.File) (map[string]string, error) {
 			// Import decls must come before all other decls, so as soon as we find a func decl, we
 			// can finish.
 			done = true
+
 			return false
 		case *ast.GenDecl:
 			if node.Tok != token.IMPORT {
 				// Import decls must come before all other decls, so as soon as we find a non-import
 				// gen decl, we can finish.
 				done = true
+
 				return false
 			}
+
 			return true
 		case *ast.ImportSpec:
 			path := mustUnquote(node.Path.Value)
@@ -111,6 +113,7 @@ func (r *DecoratorResolver) imports(file *ast.File) (map[string]string, error) {
 			case ".":
 				// We can't resolve "." imports, so throw an error
 				outer = fmt.Errorf("goast.DecoratorResolver unsupported dot-import found for %s", path)
+
 				return false
 			case "_":
 				// Don't need to worry about _ imports
@@ -120,15 +123,18 @@ func (r *DecoratorResolver) imports(file *ast.File) (map[string]string, error) {
 				name, err = r.RestorerResolver.ResolvePackage(path)
 				if err != nil {
 					outer = err
+
 					return false
 				}
 			}
 			if p, ok := imports[name]; ok {
 				outer = fmt.Errorf("goast.DecoratorResolver found multiple packages using name %s: %s and %s", name, p, path)
+
 				return false
 			}
 			imports[name] = path
 		}
+
 		return true
 	})
 	if outer != nil {
@@ -145,5 +151,6 @@ func mustUnquote(s string) string {
 	if err != nil {
 		panic(err)
 	}
+
 	return out
 }

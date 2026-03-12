@@ -11,8 +11,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/dave/dst"
-	"github.com/dave/dst/decorator/resolver"
+	"github.com/boynoiz/dst"
+	"github.com/boynoiz/dst/decorator/resolver"
 )
 
 // NewRestorer returns a restorer.
@@ -28,44 +28,40 @@ func NewRestorerWithImports(path string, resolver resolver.RestorerResolver) *Re
 	res := NewRestorer()
 	res.Path = path
 	res.Resolver = resolver
+
 	return res
 }
 
-// Restorer restores dst.Node to ast.Node
+// Restorer restores dst.Node to ast.Node.
 type Restorer struct {
 	Map
-	Fset   *token.FileSet // Fset is the *token.FileSet in use. Set this to use a pre-existing FileSet.
-	Extras bool           // Resore Objects, Scopes etc. Not needed for printing the resultant AST. If set to true, Objects and Scopes must be carefully managed to avoid duplicate nodes.
-
-	// If a Resolver is provided, the names of all imported packages are resolved, and the imports
-	// block is updated. All remote identifiers are updated (sometimes this involves changing
-	// SelectorExpr.X.Name, or even swapping between Ident and SelectorExpr). To force specific
-	// import alias names, use the FileRestorer.Alias map.
 	Resolver resolver.RestorerResolver
-	// Local package path - required if Resolver is set.
-	Path string
+	Fset     *token.FileSet
+	Path     string
+	Extras   bool
 }
 
-// Print uses format.Node to print a *dst.File to stdout
+// Print uses format.Node to print a *dst.File to stdout.
 func (pr *Restorer) Print(f *dst.File) error {
 	return pr.Fprint(os.Stdout, f)
 }
 
-// Fprint uses format.Node to print a *dst.File to a writer
+// Fprint uses format.Node to print a *dst.File to a writer.
 func (pr *Restorer) Fprint(w io.Writer, f *dst.File) error {
 	af, err := pr.RestoreFile(f)
 	if err != nil {
 		return err
 	}
+
 	return format.Node(w, pr.Fset, af)
 }
 
-// RestoreFile restores a *dst.File to an *ast.File
+// RestoreFile restores a *dst.File to an *ast.File.
 func (pr *Restorer) RestoreFile(file *dst.File) (*ast.File, error) {
 	return pr.FileRestorer().RestoreFile(file)
 }
 
-// FileRestorer restores a specific file with extra options
+// FileRestorer restores a specific file with extra options.
 func (pr *Restorer) FileRestorer() *FileRestorer {
 	return &FileRestorer{
 		Restorer: pr,
@@ -73,39 +69,39 @@ func (pr *Restorer) FileRestorer() *FileRestorer {
 	}
 }
 
-// FileRestorer restores a specific file with extra options
+// FileRestorer restores a specific file with extra options.
 type FileRestorer struct {
 	*Restorer
-	Alias           map[string]string // Map of package path -> package alias for imports
-	Name            string            // The name of the restored file in the FileSet. Can usually be left empty.
+	Alias           map[string]string
 	file            *dst.File
+	nodeDecl        map[*ast.Object]dst.Node
+	nodeData        map[*ast.Object]dst.Node
+	packageNames    map[string]string
+	Name            string
 	lines           []int
 	comments        []*ast.CommentGroup
 	base            int
 	cursor          token.Pos
-	nodeDecl        map[*ast.Object]dst.Node // Objects that have a ast.Node Decl (look up after file has been rendered)
-	nodeData        map[*ast.Object]dst.Node // Objects that have a ast.Node Data (look up after file has been rendered)
-	cursorAtNewLine token.Pos                // The cursor position directly after adding a newline decoration (or a line comment which ends in a "\n"). If we're still at this cursor position when we add a line space, reduce the "\n" by one.
-	packageNames    map[string]string        // names in the code of all imported packages ("." for dot-imports)
+	cursorAtNewLine token.Pos
 }
 
-// Print uses format.Node to print a *dst.File to stdout
+// Print uses format.Node to print a *dst.File to stdout.
 func (r *FileRestorer) Print(f *dst.File) error {
 	return r.Fprint(os.Stdout, f)
 }
 
-// Fprint uses format.Node to print a *dst.File to a writer
+// Fprint uses format.Node to print a *dst.File to a writer.
 func (r *FileRestorer) Fprint(w io.Writer, f *dst.File) error {
 	af, err := r.RestoreFile(f)
 	if err != nil {
 		return err
 	}
+
 	return format.Node(w, r.Fset, af)
 }
 
-// RestoreFile restores a *dst.File to *ast.File
+// RestoreFile restores a *dst.File to *ast.File.
 func (r *FileRestorer) RestoreFile(file *dst.File) (*ast.File, error) {
-
 	if r.Resolver == nil && r.Path != "" {
 		panic("Restorer Path should be empty when Resolver is nil")
 	}
@@ -139,9 +135,7 @@ func (r *FileRestorer) RestoreFile(file *dst.File) (*ast.File, error) {
 	// restore the file, populate comments and lines
 	f := r.restoreNode(r.file, "", "", "", false).(*ast.File)
 
-	for _, cg := range r.comments {
-		f.Comments = append(f.Comments, cg)
-	}
+	f.Comments = append(f.Comments, r.comments...)
 
 	ff := r.Fset.AddFile(r.Name, r.base, r.fileSize())
 	if !ff.SetLines(r.lines) {
@@ -164,7 +158,6 @@ func (r *FileRestorer) RestoreFile(file *dst.File) (*ast.File, error) {
 }
 
 func (r *FileRestorer) updateImports() error {
-
 	if r.Resolver == nil {
 		return nil
 	}
@@ -206,6 +199,7 @@ func (r *FileRestorer) updateImports() error {
 			// if this block has 1 spec and it's the "C" import, ignore it.
 			if len(n.Specs) == 1 && mustUnquote(n.Specs[0].(*dst.ImportSpec).Path.Value) == "C" {
 				hasCgoBlock = true
+
 				return true
 			}
 			blocks = append(blocks, n)
@@ -222,6 +216,7 @@ func (r *FileRestorer) updateImports() error {
 				importsRequired["C"] = true
 			}
 		}
+
 		return true
 	})
 
@@ -297,12 +292,12 @@ func (r *FileRestorer) updateImports() error {
 				return true
 			}
 		}
+
 		return false
 	}
 
 	// findAlias finds a unique alias given a path and a preferred alias
 	findAlias := func(path, preferred string) (name, alias string) {
-
 		// if we pass in a preferred alias we should always return an alias even when the alias
 		// matches the package name. If for some reason the source file has aliased an import with
 		// the package name, we shouldn't remove this.
@@ -333,12 +328,12 @@ func (r *FileRestorer) updateImports() error {
 	}
 
 	for _, path := range importsRequiredOrdered {
-
 		alias := effectiveAlias[path]
 
 		if alias == "." || alias == "_" {
 			// no conflict checking for dot-imports or anonymous imports
 			r.packageNames[path], aliases[path] = "", alias
+
 			continue
 		}
 
@@ -349,7 +344,6 @@ func (r *FileRestorer) updateImports() error {
 	// make any additions
 	var added bool
 	for _, path := range importsRequiredOrdered {
-
 		if _, ok := importsFound[path]; ok {
 			continue
 		}
@@ -422,15 +416,15 @@ func (r *FileRestorer) updateImports() error {
 		count := len(specs)
 
 		if count != len(block.Specs) {
-
 			block.Specs = specs
 
-			if count == 0 {
+			switch count {
+			case 0:
 				deleteBlocks[block] = true
-			} else if count == 1 {
+			case 1:
 				block.Lparen = false
 				block.Rparen = false
-			} else {
+			default:
 				block.Lparen = true
 				block.Rparen = true
 			}
@@ -450,6 +444,7 @@ func (r *FileRestorer) updateImports() error {
 				spec.Decorations().Before = dst.EmptyLine
 				spec.Decorations().After = dst.NewLine
 				foundDomainImport = true
+
 				continue
 			}
 			// all other specs, just newlines
@@ -485,14 +480,12 @@ func (r *FileRestorer) updateImports() error {
 // package is not a dot-import, we restore the Ident to a *ast.SelectorExpr with the correct name
 // in the X field.
 func (r *FileRestorer) restoreIdent(n *dst.Ident, parentName, parentField, parentFieldType string, allowDuplicate bool) ast.Node {
-
 	if r.Resolver == nil && n.Path != "" {
 		panic("This syntax has been decorated with import management enabled, but the restorer does not have import management enabled. Use NewRestorerWithImports to create a restorer with import management. See the Imports section of the readme for more information.")
 	}
 
 	var name string
 	if r.Resolver != nil && n.Path != "" {
-
 		if avoid[parentName+"."+parentField] {
 			panic(fmt.Sprintf("Path %s set on illegal Ident %s: parentName %s, parentField %s, parentFieldType %s", n.Path, n.Name, parentName, parentField, parentFieldType))
 		}
@@ -539,7 +532,6 @@ func (r *FileRestorer) restoreIdent(n *dst.Ident, parentName, parentField, paren
 	r.applySpace(n, "After", n.Decs.After)
 
 	return out
-
 }
 
 func packagePathOrderLess(pi, pj string) bool {
@@ -549,11 +541,11 @@ func packagePathOrderLess(pi, pj string) bool {
 	if idot != jdot {
 		return jdot
 	}
+
 	return pi < pj
 }
 
 func (r *FileRestorer) fileSize() int {
-
 	// If a comment is at the end of a file, it will extend past the current cursor position...
 
 	// end pos of file
@@ -593,6 +585,7 @@ func (r *FileRestorer) hasCommentField(n ast.Node) bool {
 	case *ast.Field, *ast.ValueSpec, *ast.TypeSpec, *ast.ImportSpec:
 		return true
 	}
+
 	return false
 }
 
@@ -632,7 +625,6 @@ func (r *FileRestorer) applyDecorations(node ast.Node, name string, decorations 
 	isPackageComment := isNodeFile && name == "Start"
 
 	for _, d := range decorations {
-
 		isNewline := d == "\n"
 		isLineComment := strings.HasPrefix(d, "//")
 		isInlineComment := strings.HasPrefix(d, "/*")
@@ -679,7 +671,7 @@ func (r *FileRestorer) applyDecorations(node ast.Node, name string, decorations 
 		}
 	}
 	if isPackageComment {
-		// This fixes https://github.com/dave/dst/issues/69
+		// This fixes https://github.com/boynoiz/dst/issues/69
 		r.cursor++
 	}
 }
@@ -703,7 +695,6 @@ func (r *FileRestorer) applySpace(node dst.Node, position string, space dst.Spac
 		newlines--
 	}
 	for i := 0; i < newlines; i++ {
-
 		// Advance the cursor one more byte for all newlines, so we step over any required
 		// separator char - e.g. comma. See net-hook test
 		r.cursor++
@@ -819,5 +810,6 @@ func mustUnquote(s string) string {
 	if err != nil {
 		panic(err)
 	}
+
 	return out
 }

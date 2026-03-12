@@ -4,17 +4,18 @@ import (
 	"go/token"
 	"testing"
 
-	"github.com/dave/dst"
-	"github.com/dave/dst/decorator"
+	"github.com/boynoiz/dst"
+	"github.com/boynoiz/dst/decorator"
 )
 
 func TestGoAstDecoratorResolver(t *testing.T) {
 	type tc struct{ id, expect string }
 	tests := []struct {
-		skip, solo bool
-		name       string
-		src        string
-		cases      []tc
+		name  string
+		src   string
+		cases []tc
+		skip  bool
+		solo  bool
 	}{
 		{
 			name: "simple",
@@ -54,6 +55,7 @@ func TestGoAstDecoratorResolver(t *testing.T) {
 	for _, test := range tests {
 		if test.solo {
 			solo = true
+
 			break
 		}
 	}
@@ -79,6 +81,7 @@ func TestGoAstDecoratorResolver(t *testing.T) {
 				case *dst.Ident:
 					nodes[n.Name] = n.Path
 				}
+
 				return true
 			})
 
@@ -91,7 +94,6 @@ func TestGoAstDecoratorResolver(t *testing.T) {
 					t.Errorf("expect %q, found %q", c.expect, found)
 				}
 			}
-
 		})
 	}
 }

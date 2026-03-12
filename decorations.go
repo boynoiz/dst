@@ -2,9 +2,9 @@ package dst
 
 // NodeDecs holds the decorations that are common to all nodes (except Package).
 type NodeDecs struct {
-	Before SpaceType
 	Start  Decorations
 	End    Decorations
+	Before SpaceType
 	After  SpaceType
 }
 
@@ -26,12 +26,12 @@ func (d *Decorations) Replace(decs ...string) {
 	*d = append([]string{}, decs...) // ensure we don't modify decs
 }
 
-// Clear removes all decorations from this item
+// Clear removes all decorations from this item.
 func (d *Decorations) Clear() {
 	*d = nil
 }
 
-// All returns the decorations as a string slice
+// All returns the decorations as a string slice.
 func (d *Decorations) All() []string {
 	return *d
 }
@@ -47,7 +47,7 @@ const (
 	EmptyLine SpaceType = 2 // EmptyLine is a double "\n"
 )
 
-// String returns a human readable representation of the space type
+// String returns a human readable representation of the space type.
 func (s SpaceType) String() string {
 	switch s {
 	case None:
@@ -57,5 +57,6 @@ func (s SpaceType) String() string {
 	case EmptyLine:
 		return "EmptyLine"
 	}
+
 	return ""
 }

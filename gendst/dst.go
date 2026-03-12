@@ -9,22 +9,22 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/dave/dst/gendst/data"
-	. "github.com/dave/jennifer/jen"
 	"golang.org/x/tools/go/loader"
+
+	. "github.com/dave/jennifer/jen"
+
+	"github.com/boynoiz/dst/gendst/data"
 )
 
 // notest
 
 func generateDst(names []string) error {
-
 	f := NewFile("dst")
 
 	f.Comment("notest")
 	f.Line()
 
 	for _, name := range names {
-
 		if name == "Package" {
 			f.Comment("Decorations is nil for Package nodes.")
 		} else {
@@ -38,12 +38,12 @@ func generateDst(names []string) error {
 			}
 		})
 	}
+
 	return f.Save("./decorations-node-generated.go")
 }
 
 func generateDstDecs(names []string) error {
-
-	path := "github.com/dave/dst/gendst/data"
+	path := "github.com/boynoiz/dst/gendst/data"
 	conf := loader.Config{ParserMode: parser.ParseComments}
 	conf.Import(path)
 	prog, err := conf.Load()
@@ -55,6 +55,7 @@ func generateDstDecs(names []string) error {
 		_, name := filepath.Split(prog.Fset.File(v.Pos()).Name())
 		if name == "positions.go" {
 			astFile = v
+
 			break
 		}
 	}
@@ -75,6 +76,7 @@ func generateDstDecs(names []string) error {
 				if len(parts) > 0 && parts[len(parts)-1].end == -1 {
 					parts[len(parts)-1].end = int(c.Pos() - 1)
 				}
+
 				continue
 			}
 			if matches := reg.FindStringSubmatch(c.Text); matches != nil {
@@ -111,7 +113,7 @@ func generateDstDecs(names []string) error {
 			if !indented || name == "LabeledStmt" { // LabeledStmt special case because comment is in wrong position
 				indent = "\t"
 			}
-			text = "// \t" + strings.Replace(text, "\n", "\n// "+indent, -1)
+			text = "// \t" + strings.ReplaceAll(text, "\n", "\n// "+indent)
 			f.Comment(text)
 			f.Comment("")
 		}
@@ -128,5 +130,6 @@ func generateDstDecs(names []string) error {
 			}
 		})
 	}
+
 	return f.Save("./decorations-types-generated.go")
 }

@@ -1,6 +1,6 @@
 package simple
 
-import "github.com/dave/dst/decorator/resolver"
+import "github.com/boynoiz/dst/decorator/resolver"
 
 func New(m map[string]string) RestorerResolver {
 	return RestorerResolver(m)
@@ -15,5 +15,6 @@ func (r RestorerResolver) ResolvePackage(importPath string) (string, error) {
 	if n, ok := r[importPath]; ok {
 		return n, nil
 	}
+
 	return "", resolver.ErrPackageNotFound
 }

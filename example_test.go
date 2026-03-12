@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"go/token"
 
-	"github.com/dave/dst"
-	"github.com/dave/dst/decorator"
+	"github.com/boynoiz/dst"
+	"github.com/boynoiz/dst/decorator"
 )
 
 // This example demonstrates how to inspect the AST of a Go program.
@@ -40,6 +40,7 @@ var X = f(3.14)*2 + c
 		if s != "" {
 			fmt.Println(s)
 		}
+
 		return true
 	})
 

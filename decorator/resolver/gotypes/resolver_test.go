@@ -6,17 +6,19 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/dave/dst/decorator/resolver/gotypes"
 	"golang.org/x/tools/go/packages"
+
+	"github.com/boynoiz/dst/decorator/resolver/gotypes"
 )
 
 func TestDecoratorResolver(t *testing.T) {
 	type tc struct{ id, expect string }
 	tests := []struct {
-		skip, solo bool
-		name       string
-		src        map[string]string
-		cases      []tc
+		src   map[string]string
+		name  string
+		cases []tc
+		skip  bool
+		solo  bool
 	}{
 		{
 			name: "simple",
@@ -110,6 +112,7 @@ func TestDecoratorResolver(t *testing.T) {
 	for _, test := range tests {
 		if test.solo {
 			solo = true
+
 			break
 		}
 	}
@@ -166,6 +169,7 @@ func TestDecoratorResolver(t *testing.T) {
 							parentFields[n.Name] = ""
 						}
 					}
+
 					return true
 				})
 			}
@@ -181,7 +185,6 @@ func TestDecoratorResolver(t *testing.T) {
 					t.Errorf("expect %q, found %q", c.expect, path)
 				}
 			}
-
 		})
 	}
 }

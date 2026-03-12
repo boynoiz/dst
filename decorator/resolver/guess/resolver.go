@@ -22,5 +22,6 @@ func (r RestorerResolver) ResolvePackage(importPath string) (string, error) {
 	if !strings.Contains(importPath, "/") {
 		return importPath, nil
 	}
+
 	return importPath[strings.LastIndex(importPath, "/")+1:], nil
 }

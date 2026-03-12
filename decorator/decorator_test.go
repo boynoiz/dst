@@ -13,10 +13,11 @@ import (
 
 func TestDecorator(t *testing.T) {
 	tests := []struct {
-		skip, solo bool
-		name       string
-		code       string
-		expect     string
+		name   string
+		code   string
+		expect string
+		skip   bool
+		solo   bool
 	}{
 		{
 			name: "package comment bug 3",
@@ -486,6 +487,7 @@ BlockStmt [Lbrace "\n"]`,
 	for _, test := range tests {
 		if test.solo {
 			solo = true
+
 			break
 		}
 	}
@@ -524,7 +526,6 @@ BlockStmt [Lbrace "\n"]`,
 			if normalize(test.expect) != normalize(buf.String()) {
 				t.Errorf("diff:\n%s", diff(normalize(test.expect), normalize(buf.String())))
 			}
-
 		})
 	}
 }
@@ -605,7 +606,6 @@ func TestBad(t *testing.T) {
 }
 
 func TestDecorator_ParseDir(t *testing.T) {
-
 	code := map[string]string{
 		"a.go": `package a
 
@@ -639,7 +639,6 @@ func TestDecorator_ParseDir(t *testing.T) {
 	}
 
 	compareDir(t, dir, actual)
-
 }
 
 var multiSpaces = regexp.MustCompile(" {2,}")
@@ -648,5 +647,6 @@ func normalize(s string) string {
 	s = multiSpaces.ReplaceAllString(s, "")
 	s = strings.Replace(s, "\t", "", -1)
 	s = strings.TrimSpace(s)
+
 	return s
 }

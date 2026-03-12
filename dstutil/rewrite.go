@@ -6,11 +6,10 @@ package dstutil
 
 import (
 	"fmt"
-
 	"reflect"
 	"sort"
 
-	"github.com/dave/dst"
+	"github.com/boynoiz/dst"
 )
 
 // An ApplyFunc is invoked by Apply for each node n, even if n is nil,
@@ -41,7 +40,6 @@ type ApplyFunc func(*Cursor) bool
 // Children are traversed in the order in which they appear in the
 // respective node's struct definition. A package's files are
 // traversed in the filenames' alphabetical order.
-//
 func Apply(root dst.Node, pre, post ApplyFunc) (result dst.Node) {
 	parent := &struct{ dst.Node }{root}
 	defer func() {
@@ -52,6 +50,7 @@ func Apply(root dst.Node, pre, post ApplyFunc) (result dst.Node) {
 	}()
 	a := &application{pre: pre, post: post}
 	a.apply(parent, "Node", nil, root)
+
 	return
 }
 
@@ -65,16 +64,16 @@ var abort = new(int) // singleton, to signal termination of Apply
 // c.Parent(), and f is the field identifier with name c.Name(),
 // the following invariants hold:
 //
-//   p.f            == c.Node()  if c.Index() <  0
-//   p.f[c.Index()] == c.Node()  if c.Index() >= 0
+//	p.f            == c.Node()  if c.Index() <  0
+//	p.f[c.Index()] == c.Node()  if c.Index() >= 0
 //
 // The methods Replace, Delete, InsertBefore, and InsertAfter
 // can be used to change the AST without disrupting Apply.
 type Cursor struct {
 	parent dst.Node
-	name   string
-	iter   *iterator // valid if non-nil
 	node   dst.Node
+	iter   *iterator
+	name   string
 }
 
 // Node returns the current Node.
@@ -96,6 +95,7 @@ func (c *Cursor) Index() int {
 	if c.iter != nil {
 		return c.iter.index
 	}
+
 	return -1
 }
 
@@ -113,6 +113,7 @@ func (c *Cursor) Replace(n dst.Node) {
 			panic("attempt to replace *dst.File with non-*dst.File")
 		}
 		c.parent.(*dst.Package).Files[c.name] = file
+
 		return
 	}
 
@@ -130,6 +131,7 @@ func (c *Cursor) Replace(n dst.Node) {
 func (c *Cursor) Delete() {
 	if _, ok := c.node.(*dst.File); ok {
 		delete(c.parent.(*dst.Package).Files, c.name)
+
 		return
 	}
 
@@ -186,7 +188,7 @@ type application struct {
 
 func (a *application) apply(parent dst.Node, name string, iter *iterator, n dst.Node) {
 	// convert typed nil into untyped nil
-	if v := reflect.ValueOf(n); v.Kind() == reflect.Ptr && v.IsNil() {
+	if v := reflect.ValueOf(n); v.Kind() == reflect.Pointer && v.IsNil() {
 		n = nil
 	}
 
@@ -199,6 +201,7 @@ func (a *application) apply(parent dst.Node, name string, iter *iterator, n dst.
 
 	if a.pre != nil && !a.pre(&a.cursor) {
 		a.cursor = saved
+
 		return
 	}
 

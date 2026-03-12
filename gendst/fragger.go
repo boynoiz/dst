@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/dave/dst/gendst/data"
 	. "github.com/dave/jennifer/jen"
+
+	"github.com/boynoiz/dst/gendst/data"
 )
 
 // notest
@@ -93,5 +94,6 @@ func generateFragger(names []string) error {
 			}
 		}),
 	)
+
 	return f.Save("./decorator/decorator-fragment-generated.go")
 }

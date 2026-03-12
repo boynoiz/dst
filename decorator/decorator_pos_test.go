@@ -10,16 +10,17 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/dave/dst"
-	"github.com/dave/dst/decorator/resolver/goast"
-	"github.com/dave/dst/decorator/resolver/guess"
-	"github.com/dave/dst/dstutil"
-	"github.com/dave/dst/gendst/data"
 	"golang.org/x/tools/go/loader"
+
+	"github.com/boynoiz/dst"
+	"github.com/boynoiz/dst/decorator/resolver/goast"
+	"github.com/boynoiz/dst/decorator/resolver/guess"
+	"github.com/boynoiz/dst/dstutil"
+	"github.com/boynoiz/dst/gendst/data"
 )
 
 func TestPositions(t *testing.T) {
-	path := "github.com/dave/dst/gendst/data"
+	path := "github.com/boynoiz/dst/gendst/data"
 	conf := loader.Config{ParserMode: parser.ParseComments}
 	conf.Import(path)
 	prog, err := conf.Load()
@@ -31,6 +32,7 @@ func TestPositions(t *testing.T) {
 		_, name := filepath.Split(prog.Fset.File(v.Pos()).Name())
 		if name == "positions.go" {
 			astFile = v
+
 			break
 		}
 	}
@@ -58,6 +60,7 @@ func TestPositions(t *testing.T) {
 				decorations[d.Name] = false
 			}
 		}
+
 		return decorations
 	}
 	// find all decorations:
@@ -91,6 +94,7 @@ func TestPositions(t *testing.T) {
 					}
 					allDecorations[currentNodeName][currentTestIndex] = getAllDecorations(currentNodeName)
 					done = false
+
 					break
 				}
 			}
@@ -127,6 +131,7 @@ func TestPositions(t *testing.T) {
 				}
 			}
 		}
+
 		return true
 	})
 

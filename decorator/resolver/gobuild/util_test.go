@@ -14,7 +14,6 @@ import (
 )
 
 func buildContext(m map[string]string) (*build.Context, error) {
-
 	goroot := "/goroot/"
 	gopath := "/gopath/"
 	dir := filepath.Join(gopath, "src")
@@ -54,6 +53,7 @@ func buildContext(m map[string]string) (*build.Context, error) {
 			}
 			if _, err := io.Copy(f, bytes.NewReader(formatted)); err != nil {
 				_ = f.Close()
+
 				return nil, err
 			}
 			if err := f.Close(); err != nil {
@@ -74,6 +74,7 @@ func buildContext(m map[string]string) (*build.Context, error) {
 		if !strings.HasPrefix(dir, root) {
 			return "", false
 		}
+
 		return filepath.ToSlash(dir[len(root):]), true
 	}
 
@@ -82,6 +83,7 @@ func buildContext(m map[string]string) (*build.Context, error) {
 		if err != nil {
 			return "", err
 		}
+
 		return filepath.Join(build.Default.GOROOT, rel), nil
 	}
 
@@ -121,12 +123,14 @@ func buildContext(m map[string]string) (*build.Context, error) {
 			if _, ok := hasSubDir(goroot, name); ok {
 				converted, _ := convertGoroot(name)
 				fi, err := os.Stat(converted)
+
 				return err == nil && fi.IsDir()
 			}
 			info, err := fs.Lstat(name)
 			if err != nil {
 				return false
 			}
+
 			return info.IsDir()
 		},
 
@@ -148,8 +152,10 @@ func buildContext(m map[string]string) (*build.Context, error) {
 				if err != nil {
 					return nil, err
 				}
+
 				return ioutil.ReadDir(converted)
 			}
+
 			return fs.ReadDir(name)
 		},
 
@@ -161,10 +167,13 @@ func buildContext(m map[string]string) (*build.Context, error) {
 				if err != nil {
 					return nil, err
 				}
+
 				return os.Open(converted)
 			}
+
 			return fs.Open(path)
 		},
 	}
+
 	return bc, nil
 }

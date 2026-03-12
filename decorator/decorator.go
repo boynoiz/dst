@@ -9,11 +9,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dave/dst"
-	"github.com/dave/dst/decorator/resolver"
-	"github.com/dave/dst/decorator/resolver/gotypes"
-	"github.com/dave/dst/dstutil"
 	"golang.org/x/tools/go/packages"
+
+	"github.com/boynoiz/dst"
+	"github.com/boynoiz/dst/decorator/resolver"
+	"github.com/boynoiz/dst/decorator/resolver/gotypes"
+	"github.com/boynoiz/dst/dstutil"
 )
 
 // NewDecorator returns a new decorator. If fset is nil, a new FileSet is created.
@@ -21,6 +22,7 @@ func NewDecorator(fset *token.FileSet) *Decorator {
 	if fset == nil {
 		fset = token.NewFileSet()
 	}
+
 	return &Decorator{
 		Map:       newMap(),
 		Filenames: map[*dst.File]string{},
@@ -33,6 +35,7 @@ func NewDecoratorWithImports(fset *token.FileSet, path string, resolver resolver
 	dec := NewDecorator(fset)
 	dec.Path = path
 	dec.Resolver = resolver
+
 	return dec
 }
 
@@ -63,14 +66,13 @@ type Decorator struct {
 
 // Parse uses parser.ParseFile to parse and decorate a Go source file. The src parameter should
 // be string, []byte, or io.Reader.
-func (d *Decorator) Parse(src interface{}) (*dst.File, error) {
+func (d *Decorator) Parse(src any) (*dst.File, error) {
 	return d.ParseFile("", src, parser.ParseComments)
 }
 
 // ParseFile uses parser.ParseFile to parse and decorate a Go source file. The ParseComments flag
 // is added to mode if it doesn't exist.
-func (d *Decorator) ParseFile(filename string, src interface{}, mode parser.Mode) (*dst.File, error) {
-
+func (d *Decorator) ParseFile(filename string, src any, mode parser.Mode) (*dst.File, error) {
 	// If ParseFile returns an error and also a non-nil file, the errors were just parse errors so
 	// we should continue decorating the file and return the error.
 	f, perr := parser.ParseFile(d.Fset, filename, src, mode|parser.ParseComments)
@@ -101,21 +103,22 @@ func (d *Decorator) ParseDir(dir string, filter func(os.FileInfo) bool, mode par
 		}
 		out[k] = pkg.(*dst.Package)
 	}
+
 	return out, nil
 }
 
-// DecorateFile decorates *ast.File and returns *dst.File
+// DecorateFile decorates *ast.File and returns *dst.File.
 func (d *Decorator) DecorateFile(f *ast.File) (*dst.File, error) {
 	file, err := d.DecorateNode(f)
 	if err != nil {
 		return nil, err
 	}
+
 	return file.(*dst.File), nil
 }
 
-// DecorateNode decorates ast.Node and returns dst.Node
+// DecorateNode decorates ast.Node and returns dst.Node.
 func (d *Decorator) DecorateNode(n ast.Node) (dst.Node, error) {
-
 	if d.Resolver == nil && d.Path != "" {
 		panic("Decorator Path should be empty when Resolver is nil")
 	}
@@ -136,10 +139,10 @@ func (d *Decorator) DecorateNode(n ast.Node) (dst.Node, error) {
 		return nil, err
 	}
 
-	//fmt.Println("\nFragments:")
+	// fmt.Println("\nFragments:")
 	//fd.debug(os.Stdout)
 
-	//fmt.Println("\nDecorator:")
+	// fmt.Println("\nDecorator:")
 	//debug(os.Stdout, out)
 
 	// Populate Info with filenames if we're decorating a File or Package.
@@ -168,13 +171,14 @@ func (pd *Decorator) newFileDecorator() *fileDecorator {
 
 type fileDecorator struct {
 	*Decorator
-	file          *ast.File // file we're decorating in for import name resolution - can be nil if we're just decorating an isolated node
-	cursor        int
-	fragments     []fragment
-	startIndents  map[ast.Node]int
-	endIndents    map[ast.Node]int
-	before, after map[ast.Node]dst.SpaceType
-	decorations   map[ast.Node]map[string][]string
+	file         *ast.File
+	startIndents map[ast.Node]int
+	endIndents   map[ast.Node]int
+	before       map[ast.Node]dst.SpaceType
+	after        map[ast.Node]dst.SpaceType
+	decorations  map[ast.Node]map[string][]string
+	fragments    []fragment
+	cursor       int
 }
 
 // We never need to resolve idents that are in these fields (decorateSelectorExpr will override
@@ -194,7 +198,6 @@ var avoid = map[string]bool{
 // decorateSelectorExpr is a special case for decorating a SelectorExpr, which might return an
 // Ident if the resolver determines that the SelectorExpr represents a qualified ident.
 func (f *fileDecorator) decorateSelectorExpr(parent ast.Node, parentName, parentField, parentFieldType string, n *ast.SelectorExpr) (dst.Node, error) {
-
 	if f.Resolver == nil {
 		// continue to default logic in decorateNode
 		return nil, nil
@@ -272,7 +275,7 @@ func (f *fileDecorator) decorateSelectorExpr(parent ast.Node, parentName, parent
 	out.Decs.Before = f.before[n]
 	out.Decs.After = f.after[n]
 
-	var nStart, xBefore, xStart, xEnd, xAfter, nX, sBefore, sStart, sEnd, sAfter, nEnd interface{}
+	var nStart, xBefore, xStart, xEnd, xAfter, nX, sBefore, sStart, sEnd, sAfter, nEnd any
 
 	xBefore = f.before[n.X]
 	xAfter = f.after[n.X]
@@ -307,11 +310,9 @@ func (f *fileDecorator) decorateSelectorExpr(parent ast.Node, parentName, parent
 	}
 
 	return out, nil
-
 }
 
 func (f *fileDecorator) resolvePath(force bool, parent ast.Node, parentName, parentField, parentFieldType string, id *ast.Ident) (string, error) {
-
 	if f.Resolver == nil {
 		panic("resolvePath needs a Resolver")
 	}
@@ -350,17 +351,18 @@ func stripVendor(path string) string {
 		case strings.HasPrefix(path, "vendor/"):
 			return 0, true
 		}
+
 		return 0, false
 	}
 	i, ok := findVendor(path)
 	if !ok {
 		return path
 	}
+
 	return path[i+len("vendor/"):]
 }
 
 func (f *fileDecorator) decorateObject(o *ast.Object) (*dst.Object, error) {
-
 	if o == nil {
 		return nil, nil
 	}
@@ -436,7 +438,6 @@ func (f *fileDecorator) decorateObject(o *ast.Object) (*dst.Object, error) {
 }
 
 func (f *fileDecorator) decorateScope(s *ast.Scope) (*dst.Scope, error) {
-
 	if s == nil {
 		return nil, nil
 	}
@@ -481,48 +482,49 @@ func (f *fileDecorator) decorateScope(s *ast.Scope) (*dst.Scope, error) {
 func debug(w io.Writer, file dst.Node) {
 	var result string
 	nodeType := func(n dst.Node) string {
-		return strings.Replace(fmt.Sprintf("%T", n), "*dst.", "", -1)
+		return strings.ReplaceAll(fmt.Sprintf("%T", n), "*dst.", "")
 	}
 	dst.Inspect(file, func(n dst.Node) bool {
 		if n == nil {
 			return false
 		}
-		var out string
+		var out strings.Builder
 		before, after, points := dstutil.Decorations(n)
 		switch before {
 		case dst.NewLine:
-			out += " [New line before]"
+			out.WriteString(" [New line before]")
 		case dst.EmptyLine:
-			out += " [Empty line before]"
+			out.WriteString(" [Empty line before]")
 		}
 		for _, point := range points {
 			if len(point.Decs) > 0 {
-				var values string
+				var values strings.Builder
 				for i, dec := range point.Decs {
 					if i > 0 {
-						values += " "
+						values.WriteString(" ")
 					}
-					values += fmt.Sprintf("%q", dec)
+					fmt.Fprintf(&values, "%q", dec)
 				}
-				out += fmt.Sprintf(" [%s %s]", point.Name, values)
+				fmt.Fprintf(&out, " [%s %s]", point.Name, values.String())
 			}
 		}
 		switch after {
 		case dst.NewLine:
-			out += " [New line after]"
+			out.WriteString(" [New line after]")
 		case dst.EmptyLine:
-			out += " [Empty line after]"
+			out.WriteString(" [Empty line after]")
 		}
-		if out != "" {
-			result += nodeType(n) + out + "\n"
+		if out.String() != "" {
+			result += nodeType(n) + out.String() + "\n"
 		}
+
 		return true
 	})
 	fmt.Fprint(w, result)
 }
 
-// mergeDecorations merges several decoration lists and line spaces into a single decoration list
-func mergeDecorations(decorationsOrLineSpace ...interface{}) []string {
+// mergeDecorations merges several decoration lists and line spaces into a single decoration list.
+func mergeDecorations(decorationsOrLineSpace ...any) []string {
 	var endsWithNewLine bool
 	var out []string
 	for _, v := range decorationsOrLineSpace {
@@ -556,5 +558,6 @@ func mergeDecorations(decorationsOrLineSpace ...interface{}) []string {
 			panic(fmt.Sprintf("%T", v))
 		}
 	}
+
 	return out
 }

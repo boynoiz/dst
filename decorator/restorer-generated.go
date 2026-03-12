@@ -5,7 +5,7 @@ import (
 	"go/ast"
 	"go/token"
 
-	"github.com/dave/dst"
+	"github.com/boynoiz/dst"
 )
 
 func (r *FileRestorer) restoreNode(n dst.Node, parentName, parentField, parentFieldType string, allowDuplicate bool) ast.Node {
@@ -324,6 +324,7 @@ func (r *FileRestorer) restoreNode(n dst.Node, parentName, parentField, parentFi
 			if n.List == nil {
 				return token.DEFAULT
 			}
+
 			return token.CASE
 		}().String()))
 
@@ -367,6 +368,7 @@ func (r *FileRestorer) restoreNode(n dst.Node, parentName, parentField, parentFi
 			if n.Dir == dst.RECV {
 				return token.ARROW
 			}
+
 			return token.CHAN
 		}().String()))
 
@@ -415,6 +417,7 @@ func (r *FileRestorer) restoreNode(n dst.Node, parentName, parentField, parentFi
 			if n.Comm == nil {
 				return token.DEFAULT
 			}
+
 			return token.CASE
 		}().String()))
 

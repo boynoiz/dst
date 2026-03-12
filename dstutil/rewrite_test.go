@@ -6,21 +6,22 @@ package dstutil_test
 
 import (
 	"bytes"
-
 	"go/format"
 	"go/parser"
 	"go/token"
 	"testing"
 
-	"github.com/dave/dst"
-	"github.com/dave/dst/decorator"
-	"github.com/dave/dst/dstutil"
+	"github.com/boynoiz/dst"
+	"github.com/boynoiz/dst/decorator"
+	"github.com/boynoiz/dst/dstutil"
 )
 
 var rewriteTests = [...]struct {
-	name       string
-	orig, want string
-	pre, post  dstutil.ApplyFunc
+	pre  dstutil.ApplyFunc
+	post dstutil.ApplyFunc
+	name string
+	orig string
+	want string
 }{
 	{name: "nop", orig: "package p\n", want: "package p\n"},
 
@@ -36,8 +37,10 @@ var t T
 		post: func(c *dstutil.Cursor) bool {
 			if _, ok := c.Node().(*dst.ValueSpec); ok {
 				c.Replace(valspec("t", "T"))
+
 				return false
 			}
+
 			return true
 		},
 	},
@@ -66,6 +69,7 @@ var x int
 			if gd, ok := c.Node().(*dst.GenDecl); ok {
 				gd.Decs.Start.Append("// a foo is a foo")
 			}
+
 			return true
 		},
 	},
@@ -90,6 +94,7 @@ const a, b, c = 1, 2, 3
 					c.InsertAfter(&dst.BasicLit{Kind: token.INT, Value: "2"})
 				}
 			}
+
 			return true
 		},
 	},
@@ -121,6 +126,7 @@ var after1 int
 				c.InsertAfter(vardecl("after2", "int"))
 				c.InsertBefore(vardecl("before2", "int"))
 			}
+
 			return true
 		},
 	},
@@ -142,6 +148,7 @@ var z int
 			if d, ok := n.(*dst.GenDecl); ok && d.Specs[0].(*dst.ValueSpec).Names[0].Name == "x" {
 				c.Delete()
 			}
+
 			return true
 		},
 	},
@@ -165,6 +172,7 @@ var z int
 				c.InsertAfter(vardecl("x1", "int"))
 				c.Delete()
 			}
+
 			return true
 		},
 	},
@@ -189,6 +197,7 @@ var z int
 				// The cursor is now effectively atop the 'var y int' node.
 				c.InsertAfter(vardecl("x1", "int"))
 			}
+
 			return true
 		},
 	},
@@ -210,7 +219,6 @@ func vardecl(name, typ string) *dst.GenDecl {
 func TestRewrite(t *testing.T) {
 	t.Run("*", func(t *testing.T) {
 		for _, test := range rewriteTests {
-			test := test
 			t.Run(test.name, func(t *testing.T) {
 				t.Parallel()
 				fset := token.NewFileSet()

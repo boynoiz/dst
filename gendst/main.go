@@ -3,7 +3,7 @@ package main
 import (
 	"sort"
 
-	"github.com/dave/dst/gendst/data"
+	"github.com/boynoiz/dst/gendst/data"
 )
 
 // notest
@@ -42,5 +42,6 @@ func run() error {
 	if err := generateClone(names); err != nil {
 		return err
 	}
+
 	return nil
 }

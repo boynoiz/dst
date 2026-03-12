@@ -3,16 +3,16 @@ package main
 import (
 	"fmt"
 
-	"github.com/dave/dst/gendst/data"
 	. "github.com/dave/jennifer/jen"
+
+	"github.com/boynoiz/dst/gendst/data"
 )
 
 // notest
 
-const DSTPATH = "github.com/dave/dst"
+const DSTPATH = "github.com/boynoiz/dst"
 
 func generateDecorator(names []string) error {
-
 	f := NewFile("decorator")
 	f.ImportName(DSTPATH, "dst")
 
@@ -32,7 +32,6 @@ func generateDecorator(names []string) error {
 		g.Switch(Id("n").Op(":=").Id("n").Assert(Id("type"))).BlockFunc(func(g *Group) {
 			for _, nodeName := range names {
 				g.Case(Op("*").Qual("go/ast", nodeName)).BlockFunc(func(g *Group) {
-
 					switch nodeName {
 					case "SelectorExpr":
 						g.Line()
@@ -183,12 +182,10 @@ func generateDecorator(names []string) error {
 
 					g.Line()
 					g.Return(Id("out"), Nil())
-
 				})
 			}
 		})
 		g.Return(Nil(), Nil())
-
 	})
 
 	return f.Save("./decorator/decorator-node-generated.go")
@@ -216,5 +213,6 @@ func generateDecoratorTestHelper(names []string) error {
 		})
 		g.Return()
 	})
+
 	return f.Save("./dstutil/decorations-generated.go")
 }

@@ -1,6 +1,6 @@
 package dstutil
 
-import "github.com/dave/dst"
+import "github.com/boynoiz/dst"
 
 func decorations(n dst.Node) (before, after dst.SpaceType, points []DecorationPoint) {
 	switch n := n.(type) {
@@ -365,5 +365,6 @@ func decorations(n dst.Node) (before, after dst.SpaceType, points []DecorationPo
 		points = append(points, DecorationPoint{"Assign", n.Decs.Assign})
 		points = append(points, DecorationPoint{"End", n.Decs.End})
 	}
+
 	return
 }

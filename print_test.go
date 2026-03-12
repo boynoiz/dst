@@ -11,7 +11,7 @@ import (
 )
 
 var tests = []struct {
-	x interface{} // x is printed as s
+	x any // x is printed as s
 	s string
 }{
 	// basic types
@@ -80,6 +80,7 @@ func trim(s string) string {
 			i++
 		}
 	}
+
 	return strings.Join(lines[0:i], "\n")
 }
 

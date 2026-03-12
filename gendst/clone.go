@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 
-	"github.com/dave/dst/gendst/data"
 	. "github.com/dave/jennifer/jen"
+
+	"github.com/boynoiz/dst/gendst/data"
 )
 
 // notest
 
 func generateClone(names []string) error {
-
 	f := NewFilePathName(DSTPATH, "dst")
 	f.Comment("Clone returns a deep copy of the node, ready to be re-used elsewhere in the tree.")
 	f.Func().Id("Clone").Params(Id("n").Id("Node")).Id("Node").BlockFunc(func(g *Group) {

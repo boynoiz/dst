@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/dave/dst"
+	"github.com/boynoiz/dst"
 )
 
 func (f *fileDecorator) addDecorationFragment(n ast.Node, name string, pos token.Pos) {
@@ -52,7 +52,6 @@ func (f *fileDecorator) addNewlineFragment(pos token.Pos, empty bool) {
 }
 
 func (f *fileDecorator) fragment(node ast.Node) {
-
 	// For all nodes, we add decoration, token and string fragments
 	f.addNodeFragments(node)
 
@@ -64,7 +63,6 @@ func (f *fileDecorator) fragment(node ast.Node) {
 			// we will avoid adding a newline decoration that is inside a comment
 			for _, cg := range astf.Comments {
 				for _, c := range cg.List {
-
 					// Add the comment to the fragment list.
 					f.addCommentFragment(c.Text, c.Slash)
 
@@ -129,7 +127,6 @@ func (f *fileDecorator) fragment(node ast.Node) {
 			for i := tokenf.Base(); i < max; i++ {
 				pos := f.Fset.Position(token.Pos(i))
 				if pos.Line != line {
-
 					// if the line number has changed, we're on a new line
 
 					line = pos.Line
@@ -155,12 +152,10 @@ func (f *fileDecorator) fragment(node ast.Node) {
 						// for empty lines, increment past the second "\n" manually:
 						line = nextLine
 						i++
-
 					} else {
 						// add a new line fragment
 						f.addNewlineFragment(token.Pos(i-1), false)
 					}
-
 				}
 			}
 		}
@@ -173,7 +168,6 @@ func (f *fileDecorator) fragment(node ast.Node) {
 				processFile(file)
 			}
 		}
-
 	}
 
 	// the comments and newline fragments will be after the node fragments, so we sort the entire
@@ -207,14 +201,13 @@ func (f *fileDecorator) fragment(node ast.Node) {
 }
 
 func (f *fileDecorator) link() {
-
 	// Pass 1: associate comment groups with decorations. Sweep up any other comments / new-lines /
 	// empty-lines and associate with the same decoration.
 	for i, frag := range f.fragments {
 		switch frag := frag.(type) {
 		case *decorationFragment:
 
-			// Special case for hanging indent (See https://github.com/dave/dst/issues/18)
+			// Special case for hanging indent (See https://github.com/boynoiz/dst/issues/18)
 			//
 			// If we're on the End decoration of a Stmt or Decl, and indents: end == start+1 (OR
 			// it's a case / comm clause), then search forward over empty lines for all comments
@@ -350,6 +343,7 @@ func (f *fileDecorator) link() {
 				if foundAfter {
 					f.after[nodeAfter] = spaceType
 				}
+
 				continue
 			}
 
@@ -426,11 +420,13 @@ func (f *fileDecorator) findDecoration(stopAtNewline, stopAtEmptyLine bool, from
 					if current.Name == "Start" {
 						return frags, current, true
 					}
+
 					return
 				default:
 					return
 				}
 			}
+
 			return frags, current, true
 		case *newlineFragment:
 			if stopAtNewline {
@@ -460,11 +456,11 @@ func (f *fileDecorator) findDecoration(stopAtNewline, stopAtEmptyLine bool, from
 			return
 		}
 	}
+
 	return
 }
 
 func (f *fileDecorator) findNode(from int, direction int) (node ast.Node, dec *decorationFragment, found bool) {
-
 	var name string
 	switch direction {
 	case 1:
@@ -479,6 +475,7 @@ func (f *fileDecorator) findNode(from int, direction int) (node ast.Node, dec *d
 			if frag.Name == name {
 				return frag.Node, frag, true
 			}
+
 			return
 		case *commentFragment:
 			if frag.Attached != nil && frag.Attached.Name == name {
@@ -492,6 +489,7 @@ func (f *fileDecorator) findNode(from int, direction int) (node ast.Node, dec *d
 			return
 		}
 	}
+
 	return
 }
 
@@ -508,9 +506,11 @@ func (f *fileDecorator) findIndentedComments(from int, indents [2]int) (frags [2
 		case *commentFragment:
 			if !pastNewline {
 				frags[stage] = append(frags[stage], current)
+
 				continue
 			}
-			if stage == 0 {
+			switch stage {
+			case 0:
 				// Check indent matches. If not, move to second stage or exit if that doesn't match.
 				if current.Indent != indents[0] {
 					if current.Indent == indents[1] {
@@ -519,7 +519,7 @@ func (f *fileDecorator) findIndentedComments(from int, indents [2]int) (frags [2
 						return
 					}
 				}
-			} else if stage == 1 {
+			case 1:
 				if current.Indent != indents[1] {
 					return
 				}
@@ -529,6 +529,7 @@ func (f *fileDecorator) findIndentedComments(from int, indents [2]int) (frags [2
 			return
 		}
 	}
+
 	return
 }
 
@@ -556,16 +557,16 @@ type badFragment struct {
 }
 
 type commentFragment struct {
+	Attached *decorationFragment // where did we attach this comment in pass 1?
 	Text     string
 	Pos      token.Pos
-	Attached *decorationFragment // where did we attach this comment in pass 1?
-	Indent   int                 // indent if this comment follows a newline
+	Indent   int // indent if this comment follows a newline
 }
 
 type newlineFragment struct {
-	Pos      token.Pos
-	Empty    bool                // true if this newline is an empty line (e.g. follows a "//" comment or "\n")
 	Attached *decorationFragment // where did we attach this comment in pass 1?
+	Pos      token.Pos
+	Empty    bool // true if this newline is an empty line (e.g. follows a "//" comment or "\n")
 }
 
 type decorationFragment struct {
@@ -593,7 +594,7 @@ func (f fileDecorator) debug(w io.Writer) {
 		return s.String()[strings.Index(s.String(), ":")+1:]
 	}
 	nodeType := func(n ast.Node) string {
-		return strings.Replace(fmt.Sprintf("%T", n), "*ast.", "", -1)
+		return strings.ReplaceAll(fmt.Sprintf("%T", n), "*ast.", "")
 	}
 	for _, v := range f.fragments {
 		switch v := v.(type) {

@@ -8,9 +8,9 @@ import (
 
 // notest
 
-const DSTPATH = "github.com/dave/dst"
+const DSTPATH = "github.com/boynoiz/dst"
 
-type Part interface{}
+type Part any
 
 var Info = map[string][]Part{
 	/*
@@ -2426,63 +2426,63 @@ var Specs = map[string]bool{
 }
 
 type Init struct {
-	Name  string
 	Field FieldSpec
 	Type  TypeSpec
+	Name  string
 }
 
 type Decoration struct {
-	Name    string
 	Use     Code
+	Name    string
 	Disable bool // disable this in the fragger / decorator (equivalent to Use = false)
 }
 
 type PathDecoration struct {
-	Name  string
 	Field FieldSpec
+	Name  string
 }
 
 type SpecialDecoration struct {
-	Name string
 	Decs FieldSpec
+	Name string
 	End  bool // Is this an "End" decoration (e.g. triggers end-of-node logic in applyDecorations)?
 }
 
 type String struct {
-	Name          string
 	ValueField    FieldSpec
 	PositionField FieldSpec
+	Name          string
 	Literal       bool // if Literal == true, we apply possible newlines inside the string if it's multi-line
 }
 
 type List struct {
-	Name      string
 	Field     FieldSpec
 	Elem      TypeSpec
+	Name      string
 	Separator token.Token
 	NoRestore bool
 }
 
 type Map struct {
-	Name  string
 	Field FieldSpec
 	Elem  TypeSpec
+	Name  string
 }
 
 type Node struct {
-	Name  string
 	Field FieldSpec
 	Type  TypeSpec
+	Name  string
 }
 
 type Token struct {
-	Name          string
 	Exists        Code
 	Token         Code
 	ExistsField   FieldSpec
 	PositionField FieldSpec
 	TokenField    FieldSpec
 	NoPosField    FieldSpec
+	Name          string
 }
 
 type Bad struct {
@@ -2493,19 +2493,19 @@ type Bad struct {
 
 // Value that must be copied from ast.Node to dst.Node but doesn't result in anything rendered to the output.
 type Value struct {
-	Name  string
 	Field FieldSpec
 	Value Code
+	Name  string
 }
 
 type Scope struct {
-	Name  string
 	Field FieldSpec
+	Name  string
 }
 
 type Object struct {
-	Name  string
 	Field FieldSpec
+	Name  string
 }
 
 type Code interface {
@@ -2535,6 +2535,7 @@ func (d Double) Get(id string, ast bool) *jen.Statement {
 	if ast {
 		return d.Ast(jen.Id(id))
 	}
+
 	return d.Dst(jen.Id(id))
 }
 

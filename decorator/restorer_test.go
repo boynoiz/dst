@@ -8,9 +8,10 @@ import (
 
 func TestRestorer(t *testing.T) {
 	tests := []struct {
-		skip, solo bool
-		name       string
-		code       string
+		name string
+		code string
+		skip bool
+		solo bool
 	}{
 		{
 			name: "package comment bug 7",
@@ -736,6 +737,7 @@ const d = 1
 	for _, test := range tests {
 		if test.solo {
 			solo = true
+
 			break
 		}
 	}

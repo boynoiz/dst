@@ -15,13 +15,11 @@ type DecoratorResolver struct {
 }
 
 func (r *DecoratorResolver) ResolveIdent(file *ast.File, parent ast.Node, parentField string, id *ast.Ident) (string, error) {
-
 	if r.Uses == nil {
 		return "", errors.New("gotypes.DecoratorResolver needs Uses in types info")
 	}
 
 	if se, ok := parent.(*ast.SelectorExpr); ok && parentField == "Sel" {
-
 		// if the parent is a SelectorExpr and this Ident is in the Sel field, only resolve the path
 		// if X is a package identifier
 
@@ -40,6 +38,7 @@ func (r *DecoratorResolver) ResolveIdent(file *ast.File, parent ast.Node, parent
 			// not a pkgname -> not a remote identifier
 			return "", nil
 		}
+
 		return pn.Imported().Path(), nil
 	}
 

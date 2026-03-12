@@ -7,14 +7,14 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/dave/dst"
-	"github.com/dave/dst/decorator/resolver"
-	"github.com/dave/dst/decorator/resolver/gopackages"
 	"golang.org/x/tools/go/packages"
+
+	"github.com/boynoiz/dst"
+	"github.com/boynoiz/dst/decorator/resolver"
+	"github.com/boynoiz/dst/decorator/resolver/gopackages"
 )
 
 func Load(cfg *packages.Config, patterns ...string) ([]*Package, error) {
-
 	if cfg == nil {
 		cfg = &packages.Config{Mode: packages.LoadSyntax}
 	}
@@ -41,7 +41,6 @@ func Load(cfg *packages.Config, patterns ...string) ([]*Package, error) {
 		}
 		dpkgs[pkg] = p
 		if len(pkg.Syntax) > 0 {
-
 			// Only decorate files in the GoFiles list. Syntax also has preprocessed cgo files which
 			// break things.
 			goFiles := make(map[string]bool, len(pkg.GoFiles))
@@ -73,6 +72,7 @@ func Load(cfg *packages.Config, patterns ...string) ([]*Package, error) {
 				p.Imports[path] = dimp
 			}
 		}
+
 		return p, nil
 	}
 
@@ -115,5 +115,6 @@ func (p *Package) save(resolver resolver.RestorerResolver, writeFile func(filena
 			return err
 		}
 	}
+
 	return nil
 }
