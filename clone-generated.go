@@ -573,6 +573,9 @@ func Clone(n Node) Node {
 			out.Imports = append(out.Imports, Clone(v).(*ImportSpec))
 		}
 
+		// Value: GoVersion
+		out.GoVersion = n.GoVersion
+
 		out.Decs.After = n.Decs.After
 
 		return out
@@ -1502,9 +1505,6 @@ func Clone(n Node) Node {
 			out.Name = Clone(n.Name).(*Ident)
 		}
 
-		// Token: Assign
-		out.Assign = n.Assign
-
 		// Decoration: Name
 		out.Decs.Name = append(out.Decs.Name, n.Decs.Name...)
 
@@ -1515,6 +1515,12 @@ func Clone(n Node) Node {
 
 		// Decoration: TypeParams
 		out.Decs.TypeParams = append(out.Decs.TypeParams, n.Decs.TypeParams...)
+
+		// Token: Assign
+		out.Assign = n.Assign
+
+		// Decoration: Assign
+		out.Decs.Assign = append(out.Decs.Assign, n.Decs.Assign...)
 
 		// Node: Type
 		if n.Type != nil {

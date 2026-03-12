@@ -262,7 +262,7 @@ A /*Label*/ : /*Colon*/
 
 	// TypeSpec(1)
 	type (
-		/*Start*/ T2 = /*Name*/ T1 /*End*/
+		/*Start*/ T2 = /*Assign*/ T1 /*End*/
 	)
 
 	// TypeSpec(2)

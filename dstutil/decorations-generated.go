@@ -343,6 +343,7 @@ func decorations(n dst.Node) (before, after dst.SpaceType, points []DecorationPo
 		points = append(points, DecorationPoint{"Start", n.Decs.Start})
 		points = append(points, DecorationPoint{"Name", n.Decs.Name})
 		points = append(points, DecorationPoint{"TypeParams", n.Decs.TypeParams})
+		points = append(points, DecorationPoint{"Assign", n.Decs.Assign})
 		points = append(points, DecorationPoint{"End", n.Decs.End})
 	case *dst.TypeSwitchStmt:
 		before = n.Decs.Before

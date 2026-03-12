@@ -2,10 +2,9 @@ package decorator
 
 import (
 	"fmt"
+	"github.com/boynoiz/dst"
 	"go/ast"
 	"go/token"
-
-	"github.com/boynoiz/dst"
 )
 
 func (r *FileRestorer) restoreNode(n dst.Node, parentName, parentField, parentFieldType string, allowDuplicate bool) ast.Node {
@@ -703,6 +702,9 @@ func (r *FileRestorer) restoreNode(n dst.Node, parentName, parentField, parentFi
 
 		// Scope: Scope
 		out.Scope = r.restoreScope(n.Scope)
+
+		// Value: GoVersion
+		out.GoVersion = n.GoVersion
 		r.applySpace(n, "After", n.Decs.After)
 
 		return out
@@ -1820,12 +1822,6 @@ func (r *FileRestorer) restoreNode(n dst.Node, parentName, parentField, parentFi
 			out.Name = r.restoreNode(n.Name, "TypeSpec", "Name", "Ident", allowDuplicate).(*ast.Ident)
 		}
 
-		// Token: Assign
-		if n.Assign {
-			out.Assign = r.cursor
-			r.cursor += token.Pos(len(token.ASSIGN.String()))
-		}
-
 		// Decoration: Name
 		r.applyDecorations(out, "Name", n.Decs.Name, false)
 
@@ -1836,6 +1832,15 @@ func (r *FileRestorer) restoreNode(n dst.Node, parentName, parentField, parentFi
 
 		// Decoration: TypeParams
 		r.applyDecorations(out, "TypeParams", n.Decs.TypeParams, false)
+
+		// Token: Assign
+		if n.Assign {
+			out.Assign = r.cursor
+			r.cursor += token.Pos(len(token.ASSIGN.String()))
+		}
+
+		// Decoration: Assign
+		r.applyDecorations(out, "Assign", n.Decs.Assign, false)
 
 		// Node: Type
 		if n.Type != nil {

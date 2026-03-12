@@ -809,6 +809,9 @@ func (f *fileDecorator) decorateNode(parent ast.Node, parentName, parentField, p
 			out.Imports = append(out.Imports, child.(*dst.ImportSpec))
 		}
 
+		// Value: GoVersion
+		out.GoVersion = n.GoVersion
+
 		if nd, ok := f.decorations[n]; ok {
 			if decs, ok := nd["Start"]; ok {
 				out.Decs.Start = decs
@@ -2199,9 +2202,6 @@ func (f *fileDecorator) decorateNode(parent ast.Node, parentName, parentField, p
 			out.Name = child.(*dst.Ident)
 		}
 
-		// Token: Assign
-		out.Assign = n.Assign.IsValid()
-
 		// Node: TypeParams
 		if n.TypeParams != nil {
 			child, err := f.decorateNode(n, "TypeSpec", "TypeParams", "FieldList", n.TypeParams)
@@ -2210,6 +2210,9 @@ func (f *fileDecorator) decorateNode(parent ast.Node, parentName, parentField, p
 			}
 			out.TypeParams = child.(*dst.FieldList)
 		}
+
+		// Token: Assign
+		out.Assign = n.Assign.IsValid()
 
 		// Node: Type
 		if n.Type != nil {
@@ -2229,6 +2232,9 @@ func (f *fileDecorator) decorateNode(parent ast.Node, parentName, parentField, p
 			}
 			if decs, ok := nd["TypeParams"]; ok {
 				out.Decs.TypeParams = decs
+			}
+			if decs, ok := nd["Assign"]; ok {
+				out.Decs.Assign = decs
 			}
 			if decs, ok := nd["End"]; ok {
 				out.Decs.End = decs

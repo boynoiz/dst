@@ -118,7 +118,7 @@ func main() {
 			// Normalize strings to ignore insignificant whitespace differences if necessary,
 			// though typical round-trip should be exact for formatted code.
 			got := buf.String()
-			
+
 			// Use the diff helper assumed to be present in the package from other tests
 			// (e.g. wrapper around diffmatchpatch as seen in existing tests like decorator_fragment_test.go)
 			if normalize(got) != normalize(expectedCode) {

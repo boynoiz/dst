@@ -1431,11 +1431,6 @@ func (f *fileDecorator) addNodeFragments(n ast.Node) {
 			f.addNodeFragments(n.Name)
 		}
 
-		// Token: Assign
-		if n.Assign.IsValid() {
-			f.addTokenFragment(n, token.ASSIGN, n.Assign)
-		}
-
 		// Decoration: Name
 		f.addDecorationFragment(n, "Name", token.NoPos)
 
@@ -1447,6 +1442,16 @@ func (f *fileDecorator) addNodeFragments(n ast.Node) {
 		// Decoration: TypeParams
 		if n.TypeParams != nil {
 			f.addDecorationFragment(n, "TypeParams", token.NoPos)
+		}
+
+		// Token: Assign
+		if n.Assign.IsValid() {
+			f.addTokenFragment(n, token.ASSIGN, n.Assign)
+		}
+
+		// Decoration: Assign
+		if n.Assign.IsValid() {
+			f.addDecorationFragment(n, "Assign", token.NoPos)
 		}
 
 		// Node: Type

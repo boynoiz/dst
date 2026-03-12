@@ -20,13 +20,13 @@ var Info = map[string][]Part{
 		// Field.Names is nil for unnamed parameters (parameter lists which only contain types)
 		// and embedded struct fields. In the latter case, the field name is the type name.
 		//
-		type Field struct {
-			Doc     *CommentGroup // associated documentation; or nil
-			Names   []*Ident      // field/method/(type) parameter names; or nil
-			Type    Expr          // field/method/(type) parameter type
-			Tag     *BasicLit     // field tag; or nil
-			Comment *CommentGroup // line comments; or nil
-		}
+		// type Field struct {
+		//	Doc     *CommentGroup // associated documentation; or nil
+		//	Names   []*Ident      // field/method/(type) parameter names; or nil
+		//	Type    Expr          // field/method/(type) parameter type
+		//	Tag     *BasicLit     // field tag; or nil
+		//	Comment *CommentGroup // line comments; or nil
+		// }
 	*/
 	"Field": {
 		Decoration{
@@ -111,9 +111,9 @@ var Info = map[string][]Part{
 		// syntax errors for which no correct expression nodes can be
 		// created.
 		//
-		BadExpr struct {
-			From, To token.Pos // position range of bad expression
-		}
+		// BadExpr struct {
+		//	From, To token.Pos // position range of bad expression
+		// }
 	*/
 	"BadExpr": {
 		Decoration{
@@ -171,10 +171,10 @@ var Info = map[string][]Part{
 		// An Ellipsis node stands for the "..." type in a
 		// parameter list or the "..." length in an array type.
 		//
-		Ellipsis struct {
-			Ellipsis token.Pos // position of "..."
-			Elt      Expr      // ellipsis element type (parameter lists only); or nil
-		}
+		// Ellipsis struct {
+		//	Ellipsis token.Pos // position of "..."
+		//	Elt      Expr      // ellipsis element type (parameter lists only); or nil
+		// }
 	*/
 	"Ellipsis": {
 		Decoration{
@@ -555,12 +555,12 @@ var Info = map[string][]Part{
 		// A TypeAssertExpr node represents an expression followed by a
 		// type assertion.
 		//
-		TypeAssertExpr struct {
-			X      Expr      // expression
-			Lparen token.Pos // position of "("
-			Type   Expr      // asserted type; nil means type switch X.(type)
-			Rparen token.Pos // position of ")"
-		}
+		// TypeAssertExpr struct {
+		//	X      Expr      // expression
+		//	Lparen token.Pos // position of "("
+		//	Type   Expr      // asserted type; nil means type switch X.(type)
+		//	Rparen token.Pos // position of ")"
+		// }
 	*/
 	"TypeAssertExpr": {
 		Decoration{
@@ -674,10 +674,10 @@ var Info = map[string][]Part{
 		// A StarExpr node represents an expression of the form "*" Expression.
 		// Semantically it could be a unary "*" expression, or a pointer type.
 		//
-		StarExpr struct {
-			Star token.Pos // position of "*"
-			X    Expr      // operand
-		}
+		// StarExpr struct {
+		//	Star token.Pos // position of "*"
+		//	X    Expr      // operand
+		// }
 	*/
 	"StarExpr": {
 		Decoration{
@@ -704,11 +704,11 @@ var Info = map[string][]Part{
 		// A UnaryExpr node represents a unary expression.
 		// Unary "*" expressions are represented via StarExpr nodes.
 		//
-		UnaryExpr struct {
-			OpPos token.Pos   // position of Op
-			Op    token.Token // operator
-			X     Expr        // operand
-		}
+		// UnaryExpr struct {
+		//	OpPos token.Pos   // position of Op
+		//	Op    token.Token // operator
+		//	X     Expr        // operand
+		// }
 	*/
 	"UnaryExpr": {
 		Decoration{
@@ -775,11 +775,11 @@ var Info = map[string][]Part{
 		// A KeyValueExpr node represents (key : value) pairs
 		// in composite literals.
 		//
-		KeyValueExpr struct {
-			Key   Expr
-			Colon token.Pos // position of ":"
-			Value Expr
-		}
+		// KeyValueExpr struct {
+		//	Key   Expr
+		//	Colon token.Pos // position of ":"
+		//	Value Expr
+		// }
 	*/
 	"KeyValueExpr": {
 		Decoration{
@@ -1095,9 +1095,9 @@ var Info = map[string][]Part{
 		// syntax errors for which no correct statement nodes can be
 		// created.
 		//
-		BadStmt struct {
-			From, To token.Pos // position range of bad statement
-		}
+		// BadStmt struct {
+		//	From, To token.Pos // position range of bad statement
+		// }
 	*/
 	"BadStmt": {
 		Decoration{
@@ -1142,10 +1142,10 @@ var Info = map[string][]Part{
 		// The "position" of the empty statement is the position
 		// of the immediately following (explicit or implicit) semicolon.
 		//
-		EmptyStmt struct {
-			Semicolon token.Pos // position of following ";"
-			Implicit  bool      // if set, ";" was omitted in the source
-		}
+		// EmptyStmt struct {
+		//	Semicolon token.Pos // position of following ";"
+		//	Implicit  bool      // if set, ";" was omitted in the source
+		// }
 	*/
 	"EmptyStmt": {
 		Decoration{
@@ -1206,9 +1206,9 @@ var Info = map[string][]Part{
 		// An ExprStmt node represents a (stand-alone) expression
 		// in a statement list.
 		//
-		ExprStmt struct {
-			X Expr // expression
-		}
+		// ExprStmt struct {
+		//	X Expr // expression
+		// }
 	*/
 	"ExprStmt": {
 		Decoration{
@@ -1296,12 +1296,12 @@ var Info = map[string][]Part{
 		// An AssignStmt node represents an assignment or
 		// a short variable declaration.
 		//
-		AssignStmt struct {
-			Lhs    []Expr
-			TokPos token.Pos   // position of Tok
-			Tok    token.Token // assignment token, DEFINE
-			Rhs    []Expr
-		}
+		// AssignStmt struct {
+		//	Lhs    []Expr
+		//	TokPos token.Pos   // position of Tok
+		//	Tok    token.Token // assignment token, DEFINE
+		//	Rhs    []Expr
+		// }
 	*/
 	"AssignStmt": {
 		Decoration{
@@ -1421,11 +1421,11 @@ var Info = map[string][]Part{
 		// A BranchStmt node represents a break, continue, goto,
 		// or fallthrough statement.
 		//
-		BranchStmt struct {
-			TokPos token.Pos   // position of Tok
-			Tok    token.Token // keyword token (BREAK, CONTINUE, GOTO, FALLTHROUGH)
-			Label  *Ident      // label name; or nil
-		}
+		// BranchStmt struct {
+		//	TokPos token.Pos   // position of Tok
+		//	Tok    token.Token // keyword token (BREAK, CONTINUE, GOTO, FALLTHROUGH)
+		//	Label  *Ident      // label name; or nil
+		// }
 	*/
 	"BranchStmt": {
 		Decoration{
@@ -1951,13 +1951,13 @@ var Info = map[string][]Part{
 		// A ValueSpec node represents a constant or variable declaration
 		// (ConstSpec or VarSpec production).
 		//
-		ValueSpec struct {
-			Doc     *CommentGroup // associated documentation; or nil
-			Names   []*Ident      // value names (len(Names) > 0)
-			Type    Expr          // value type; or nil
-			Values  []Expr        // initial values; or nil
-			Comment *CommentGroup // line comments; or nil
-		}
+		// ValueSpec struct {
+		//	Doc     *CommentGroup // associated documentation; or nil
+		//	Names   []*Ident      // value names (len(Names) > 0)
+		//	Type    Expr          // value type; or nil
+		//	Values  []Expr        // initial values; or nil
+		//	Comment *CommentGroup // line comments; or nil
+		// }
 	*/
 	"ValueSpec": {
 		Decoration{
@@ -2013,16 +2013,6 @@ var Info = map[string][]Part{
 			Field: Field{"Name"},
 			Type:  Struct{"Ident"},
 		},
-		Token{
-			Name:  "Assign",
-			Token: Basic{jen.Qual("go/token", "ASSIGN")},
-			Exists: Double{
-				Ast: Expr(func(n *jen.Statement) *jen.Statement { return n.Dot("Assign").Dot("IsValid").Call() }),
-				Dst: Expr(func(n *jen.Statement) *jen.Statement { return n.Dot("Assign") }),
-			},
-			ExistsField:   Field{"Assign"},
-			PositionField: Field{"Assign"},
-		},
 		Decoration{
 			Name: "Name",
 		},
@@ -2034,6 +2024,23 @@ var Info = map[string][]Part{
 		Decoration{
 			Name: "TypeParams",
 			Use:  Expr(func(n *jen.Statement) *jen.Statement { return n.Dot("TypeParams").Op("!=").Nil() }),
+		},
+		Token{
+			Name:  "Assign",
+			Token: Basic{jen.Qual("go/token", "ASSIGN")},
+			Exists: Double{
+				Ast: Expr(func(n *jen.Statement) *jen.Statement { return n.Dot("Assign").Dot("IsValid").Call() }),
+				Dst: Expr(func(n *jen.Statement) *jen.Statement { return n.Dot("Assign") }),
+			},
+			ExistsField:   Field{"Assign"},
+			PositionField: Field{"Assign"},
+		},
+		Decoration{
+			Name: "Assign", // Explicit decoration point for '='
+			Use: Double{
+				Ast: Expr(func(n *jen.Statement) *jen.Statement { return n.Dot("Assign").Dot("IsValid").Call() }),
+				Dst: Expr(func(n *jen.Statement) *jen.Statement { return n.Dot("Assign") }),
+			},
 		},
 		Node{
 			Name:  "Type",
@@ -2049,9 +2056,9 @@ var Info = map[string][]Part{
 		// syntax errors for which no correct declaration nodes can be
 		// created.
 		//
-		BadDecl struct {
-			From, To token.Pos // position range of bad declaration
-		}
+		// BadDecl struct {
+		//	From, To token.Pos // position range of bad declaration
+		// }
 	*/
 	"BadDecl": {
 		Decoration{
