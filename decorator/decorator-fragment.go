@@ -338,10 +338,14 @@ func (f *fileDecorator) link() {
 					spaceType = dst.EmptyLine
 				}
 				if foundBefore {
-					f.before[nodeBefore] = spaceType
+					if spaceType > f.before[nodeBefore] {
+						f.before[nodeBefore] = spaceType
+					}
 				}
 				if foundAfter {
-					f.after[nodeAfter] = spaceType
+					if spaceType > f.after[nodeAfter] {
+						f.after[nodeAfter] = spaceType
+					}
 				}
 
 				continue
