@@ -3,6 +3,11 @@
 
 // notest
 
+// ImportSpec
+import (
+	/*Start*/ fmt /*Name*/ "fmt" /*End*/
+)
+
 // --
 
 var (
@@ -20,7 +25,7 @@ type A struct {
 }
 
 // FieldList.
-type A1 struct {
+type A1 struct /*Start*/ { /*Opening*/
 	c string
 	a int
 	b int
@@ -51,7 +56,7 @@ var H = /*Start*/ []int{0, 1, 2} /*X*/ [ /*Lbrack*/ 1: /*Low*/ 2: /*High*/ 3 /*M
 var H1 = /*Start*/ []int{0, 1, 2} /*X*/ [ /*Lbrack*/ 1: /*Low*/ 2 /*High*/] /*End*/
 
 // SliceExpr(2).
-var H2 = /*Start*/ []int{0} /*End*/
+var H2 = /*Start*/ []int{0} /*X*/ [: /*Low*/] /*End*/
 
 // SliceExpr(3).
 var H3 = /*Start*/ []int{0} /*X*/ [ /*Lbrack*/ 1: /*Low*/] /*End*/
@@ -120,9 +125,11 @@ A /*Label*/ : /*Colon*/
 
 	// Ident(0)
 	/*Start*/
+	i /*End*/ ++
 
 	// Ident(1)
 	/*Start*/
+	fmt. /*X*/ Print /*End*/ ()
 
 	// SendStmt
 	/*Start*/
@@ -213,13 +220,24 @@ A /*Label*/ : /*Colon*/
 	} /*End*/
 
 	// ForStmt(0)
-	/*Start*/
+	func() {
+		/*Start*/
+		for /*For*/ {
+			i++
+		} /*End*/
+	}()
 
 	// ForStmt(1)
 	/*Start*/
+	for /*For*/ i < 1 /*Cond*/ {
+		i++
+	} /*End*/
 
 	// ForStmt(2)
 	/*Start*/
+	for /*For*/ i = 0; /*Init*/ i < 10; /*Cond*/ i++ /*Post*/ {
+		i++
+	} /*End*/
 
 	// RangeStmt(0)
 	/*Start*/
@@ -239,19 +257,19 @@ A /*Label*/ : /*Colon*/
 	} /*End*/
 
 	// ValueSpec(0)
-
-	/*Start*/
-	j := /*Assign*/ 1 /*End*/
+	var (
+		/*Start*/ j = /*Assign*/ 1 /*End*/
+	)
 
 	// ValueSpec(1)
-
-	/*Start*/
-	k, l := /*Assign*/ 1, 2 /*End*/
+	var (
+		/*Start*/ k, l = /*Assign*/ 1, 2 /*End*/
+	)
 
 	// ValueSpec(2)
-
-	/*Start*/
-	m, n := /*Assign*/ 1, 2 /*End*/
+	var (
+		/*Start*/ m, n = /*Assign*/ 1, 2 /*End*/
+	)
 
 	// --
 
@@ -296,25 +314,25 @@ A /*Label*/ : /*Colon*/
 }
 
 // FuncDecl(0)
-/*Start.*/
+/*Start*/
 func /*Func*/ d /*Name*/ (d, e int) /*Params*/ {
 	return
 } /*End*/
 
 // FuncDecl(1)
-/*Start.*/
+/*Start*/
 func /*Func*/ TP /*Name*/ [P any] /*TypeParams*/ (a int) /*Params*/ (b P) /*Results*/ {
 	return b
 } /*End*/
 
 // FuncDecl(2)
-/*Start.*/
+/*Start*/
 func /*Func*/ (a *A) /*Recv*/ e /*Name*/ (d, e int) /*Params*/ {
 	return
 } /*End*/
 
 // FuncDecl(3)
-/*Start.*/
+/*Start*/
 func /*Func*/ (a *A) /*Recv*/ f /*Name*/ (d, e int) /*Params*/ (f, g int) /*Results*/ {
 	return f, g
 } /*End*/
