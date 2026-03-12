@@ -5,7 +5,6 @@ import (
 	"go/build"
 	"go/format"
 	"io"
-
 	"os"
 	"path/filepath"
 	"strings"
@@ -153,7 +152,18 @@ func buildContext(m map[string]string) (*build.Context, error) {
 					return nil, err
 				}
 
-				return os.ReadDir(converted)
+				entries, err := os.ReadDir(converted)
+				if err != nil {
+					return nil, err
+				}
+				infos := make([]os.FileInfo, len(entries))
+				for i, e := range entries {
+					infos[i], err = e.Info()
+					if err != nil {
+						return nil, err
+					}
+				}
+				return infos, nil
 			}
 
 			return fs.ReadDir(name)
