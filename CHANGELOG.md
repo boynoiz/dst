@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [`#1f0da69`](https://github.com/boynoiz/dst/commit/1f0da696b7ca2068de04b86065be4a71877463ad) Simplify `ValueSpec` declarations and clean up `SliceExpr` fixtures
 - [`#881f50e`](https://github.com/boynoiz/dst/commit/881f50e278eec1b9d8a37e5640cb7a0935f88d13) Align permissions format, clean up unused `return` statements, and migrate from `ioutil` to `os` APIs
 
+### Testing
+
+- [`#62da692`](https://github.com/boynoiz/dst/commit/62da692730fc22b6336487a6f3115dc0635c5430) Skip known upstream bugs in TestPositions and TestLoadStdLibAll
+
 ### Miscellaneous Tasks
 
 - [`#3a30d7d`](https://github.com/boynoiz/dst/commit/3a30d7d1163734cf36765c5327a7c17edc907f1f) Rename module path from dave/dst to boynoiz/dst
