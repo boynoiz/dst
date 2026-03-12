@@ -5,21 +5,23 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/dave/dst"
 	"golang.org/x/tools/go/packages"
+
+	"github.com/boynoiz/dst"
 )
 
 func TestDecoratorResolver(t *testing.T) {
 	type tc struct {
-		expect           string
 		get              func(*dst.File) *dst.Ident
+		expect           string
 		resolveLocalPath bool
 	}
 	tests := []struct {
-		skip, solo bool
-		name       string
-		src        map[string]string
-		cases      []tc
+		src   map[string]string
+		name  string
+		cases []tc
+		skip  bool
+		solo  bool
 	}{
 		{
 			name: "simple",
@@ -43,33 +45,34 @@ func TestDecoratorResolver(t *testing.T) {
 			},
 			cases: []tc{
 				{
-					"root/a",
-					func(f *dst.File) *dst.Ident {
+					expect: "root/a",
+					get: func(f *dst.File) *dst.Ident {
 						d := f.Decls[1]
+
 						return d.(*dst.FuncDecl).Body.List[0].(*dst.ExprStmt).X.(*dst.CallExpr).Fun.(*dst.Ident)
 					},
-					false,
+					resolveLocalPath: false,
 				},
 				{
-					"root/b",
-					func(f *dst.File) *dst.Ident {
+					expect: "root/b",
+					get: func(f *dst.File) *dst.Ident {
 						return f.Decls[1].(*dst.FuncDecl).Body.List[1].(*dst.ExprStmt).X.(*dst.CallExpr).Fun.(*dst.Ident)
 					},
-					false,
+					resolveLocalPath: false,
 				},
 				{
-					"",
-					func(f *dst.File) *dst.Ident {
+					expect: "",
+					get: func(f *dst.File) *dst.Ident {
 						return f.Decls[1].(*dst.FuncDecl).Body.List[2].(*dst.ExprStmt).X.(*dst.CallExpr).Fun.(*dst.Ident)
 					},
-					false,
+					resolveLocalPath: false,
 				},
 				{
-					"root/main",
-					func(f *dst.File) *dst.Ident {
+					expect: "root/main",
+					get: func(f *dst.File) *dst.Ident {
 						return f.Decls[1].(*dst.FuncDecl).Body.List[2].(*dst.ExprStmt).X.(*dst.CallExpr).Fun.(*dst.Ident)
 					},
-					true,
+					resolveLocalPath: true,
 				},
 			},
 		},
@@ -78,6 +81,7 @@ func TestDecoratorResolver(t *testing.T) {
 	for _, test := range tests {
 		if test.solo {
 			solo = true
+
 			break
 		}
 	}
@@ -123,6 +127,7 @@ func TestDecoratorResolver(t *testing.T) {
 						if err != nil {
 							t.Fatal(err)
 						}
+
 						break
 					}
 				}
@@ -132,7 +137,6 @@ func TestDecoratorResolver(t *testing.T) {
 					t.Errorf("expected %q, found %q", c.expect, id.Path)
 				}
 			}
-
 		})
 	}
 }

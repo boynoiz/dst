@@ -9,16 +9,18 @@ import (
 	"go/types"
 	"os"
 	"strconv"
+	"strings"
 	"testing"
 
-	"github.com/dave/dst"
-	"github.com/dave/dst/decorator"
-	"github.com/dave/dst/decorator/resolver/goast"
-	"github.com/dave/dst/decorator/resolver/gopackages"
-	"github.com/dave/dst/decorator/resolver/gotypes"
-	"github.com/dave/dst/decorator/resolver/guess"
-	"github.com/dave/dst/dstutil"
 	"golang.org/x/tools/go/packages"
+
+	"github.com/boynoiz/dst"
+	"github.com/boynoiz/dst/decorator"
+	"github.com/boynoiz/dst/decorator/resolver/goast"
+	"github.com/boynoiz/dst/decorator/resolver/gopackages"
+	"github.com/boynoiz/dst/decorator/resolver/gotypes"
+	"github.com/boynoiz/dst/decorator/resolver/guess"
+	"github.com/boynoiz/dst/dstutil"
 )
 
 func TestDecorations_All(t *testing.T) {
@@ -86,7 +88,6 @@ func TestSpaceType_String(t *testing.T) {
 }
 
 func ExampleAlias() {
-
 	code := `package main
 
 		import "fmt"
@@ -119,11 +120,9 @@ func ExampleAlias() {
 	//func main() {
 	//	fmt1.Println("a")
 	//}
-
 }
 
-func ExampleManualImports() {
-
+func Example_manualImports() {
 	code := `package main
 
 		import "fmt"
@@ -162,11 +161,9 @@ func ExampleManualImports() {
 	//func main() {
 	//	fmt.Println(baz.A())
 	//}
-
 }
 
-func ExampleImports() {
-
+func Example_imports() {
 	// Create a simple module in a temporary directory
 	dir, err := tempDir(map[string]string{
 		"go.mod":  "module root",
@@ -216,8 +213,7 @@ func ExampleImports() {
 	//func main() { fmt.Println("Hello, World!") }
 }
 
-func ExampleGoTypesImport() {
-
+func Example_goTypesImport() {
 	// Create a simple module in a temporary directory
 	dir, err := tempDir(map[string]string{
 		"go.mod": "module root",
@@ -297,7 +293,7 @@ func ExampleClone() {
 	//var j /* b */ int
 }
 
-func ExampleDecorationPoints() {
+func Example_decorationPoints() {
 	code := `package main
 	
 	// main comment
@@ -328,29 +324,30 @@ func ExampleDecorationPoints() {
 			return false
 		}
 		before, after, points := dstutil.Decorations(node)
-		var info string
+		var info strings.Builder
 		if before != dst.None {
-			info += fmt.Sprintf("- Before: %s\n", before)
+			info.WriteString(fmt.Sprintf("- Before: %s\n", before))
 		}
 		for _, point := range points {
 			if len(point.Decs) == 0 {
 				continue
 			}
-			info += fmt.Sprintf("- %s: [", point.Name)
+			info.WriteString(fmt.Sprintf("- %s: [", point.Name))
 			for i, dec := range point.Decs {
 				if i > 0 {
-					info += ", "
+					info.WriteString(", ")
 				}
-				info += fmt.Sprintf("%q", dec)
+				info.WriteString(fmt.Sprintf("%q", dec))
 			}
-			info += "]\n"
+			info.WriteString("]\n")
 		}
 		if after != dst.None {
-			info += fmt.Sprintf("- After: %s\n", after)
+			info.WriteString(fmt.Sprintf("- After: %s\n", after))
 		}
-		if info != "" {
-			fmt.Printf("%T\n%s\n", node, info)
+		if info.String() != "" {
+			fmt.Printf("%T\n%s\n", node, info.String())
 		}
+
 		return true
 	})
 
@@ -383,7 +380,7 @@ func ExampleDecorationPoints() {
 	//- Lbrace: ["\n", "// empty block"]
 }
 
-func ExampleTypes() {
+func Example_types() {
 	code := `package main
 
 	func main() {
@@ -461,10 +458,9 @@ func ExampleTypes() {
 	//	foo++
 	//	println(foo)
 	//}
-
 }
 
-func ExampleDecorated() {
+func Example_decorated() {
 	code := `package main
 
 	func main() {
@@ -501,7 +497,7 @@ func ExampleDecorated() {
 	//}
 }
 
-func ExampleSpace() {
+func Example_space() {
 	code := `package main
 
 	func main() {
@@ -623,7 +619,7 @@ func ExampleDecorations() {
 	//}
 }
 
-func ExampleAstBroken() {
+func Example_astBroken() {
 	code := `package a
 
 	func main(){
@@ -655,7 +651,7 @@ func ExampleAstBroken() {
 	//}
 }
 
-func ExampleDstFixed() {
+func Example_dstFixed() {
 	code := `package a
 
 	func main(){

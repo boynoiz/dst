@@ -1,19 +1,21 @@
 package guess_test
 
 import (
+	"errors"
 	"testing"
 
-	"github.com/dave/dst/decorator/resolver"
-	"github.com/dave/dst/decorator/resolver/guess"
+	"github.com/boynoiz/dst/decorator/resolver"
+	"github.com/boynoiz/dst/decorator/resolver/guess"
 )
 
 func TestRestorerResolver(t *testing.T) {
 	type tc struct{ importPath, expectName string }
 	tests := []struct {
-		skip, solo bool
-		name       string
-		resolve    func() (end func(), r resolver.RestorerResolver)
-		cases      []tc
+		resolve func() (end func(), r resolver.RestorerResolver)
+		name    string
+		cases   []tc
+		skip    bool
+		solo    bool
 	}{
 		{
 			name: "guess.RestorerResolver",
@@ -21,6 +23,7 @@ func TestRestorerResolver(t *testing.T) {
 				r = guess.RestorerResolver{
 					"a/b/c": "d",
 				}
+
 				return
 			},
 			cases: []tc{
@@ -33,6 +36,7 @@ func TestRestorerResolver(t *testing.T) {
 	for _, test := range tests {
 		if test.solo {
 			solo = true
+
 			break
 		}
 	}
@@ -50,7 +54,7 @@ func TestRestorerResolver(t *testing.T) {
 				if end != nil {
 					end() // delete temp dir if created
 				}
-				if err == resolver.ErrPackageNotFound {
+				if errors.Is(err, resolver.ErrPackageNotFound) {
 					name = ""
 				} else if err != nil {
 					t.Errorf("error resolving path %s: %v", c.importPath, err)

@@ -1,20 +1,22 @@
 package gobuild_test
 
 import (
+	"errors"
 	"path/filepath"
 	"testing"
 
-	"github.com/dave/dst/decorator/resolver"
-	"github.com/dave/dst/decorator/resolver/gobuild"
+	"github.com/boynoiz/dst/decorator/resolver"
+	"github.com/boynoiz/dst/decorator/resolver/gobuild"
 )
 
 func TestRestorerResolver(t *testing.T) {
 	type tc struct{ importPath, fromDir, expectName string }
 	tests := []struct {
-		skip, solo bool
-		name       string
-		resolve    func() (end func(), root string, r *gobuild.RestorerResolver)
-		cases      []tc
+		resolve func() (end func(), root string, r *gobuild.RestorerResolver)
+		name    string
+		cases   []tc
+		skip    bool
+		solo    bool
 	}{
 		{
 			name: "gobuild.Resolver",
@@ -31,6 +33,7 @@ func TestRestorerResolver(t *testing.T) {
 				}
 				r = &gobuild.RestorerResolver{Context: bc}
 				root = "/gopath/src"
+
 				return
 			},
 			cases: []tc{
@@ -43,6 +46,7 @@ func TestRestorerResolver(t *testing.T) {
 	for _, test := range tests {
 		if test.solo {
 			solo = true
+
 			break
 		}
 	}
@@ -62,7 +66,7 @@ func TestRestorerResolver(t *testing.T) {
 				if end != nil {
 					end() // delete temp dir if created
 				}
-				if err == resolver.ErrPackageNotFound {
+				if errors.Is(err, resolver.ErrPackageNotFound) {
 					name = ""
 				} else if err != nil {
 					t.Errorf("error resolving path %s from dir %s: %v", c.importPath, fromDir, err)

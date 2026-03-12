@@ -22,7 +22,7 @@ func (p *pkgBuilder) error(msg string) {
 	p.errors.Add(p.fset.Position(token.NoPos), msg)
 }
 
-func (p *pkgBuilder) errorf(format string, args ...interface{}) {
+func (p *pkgBuilder) errorf(format string, args ...any) {
 	p.error(fmt.Sprintf(format, args...))
 }
 
@@ -41,9 +41,11 @@ func resolve(scope *Scope, ident *Ident) bool {
 	for ; scope != nil; scope = scope.Outer {
 		if obj := scope.Lookup(ident.Name); obj != nil {
 			ident.Obj = obj
+
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -66,7 +68,6 @@ type Importer func(imports map[string]*Object, path string) (pkg *Object, err er
 // belong to different packages, one package name is selected and files with
 // different package names are reported and then ignored.
 // The result is a package node and a scanner.ErrorList if there were errors.
-//
 func NewPackage(fset *token.FileSet, files map[string]*File, importer Importer, universe *Scope) (*Package, error) {
 	var p pkgBuilder
 	p.fset = fset
@@ -81,6 +82,7 @@ func NewPackage(fset *token.FileSet, files map[string]*File, importer Importer, 
 			pkgName = name
 		case name != pkgName:
 			p.errorf("package %s; expected %s", name, pkgName)
+
 			continue // ignore this file
 		}
 
@@ -107,6 +109,7 @@ func NewPackage(fset *token.FileSet, files map[string]*File, importer Importer, 
 		for _, spec := range file.Imports {
 			if importer == nil {
 				importErrors = true
+
 				continue
 			}
 			path, _ := strconv.Unquote(spec.Path.Value)
@@ -114,6 +117,7 @@ func NewPackage(fset *token.FileSet, files map[string]*File, importer Importer, 
 			if err != nil {
 				p.errorf("could not import %s (%s)", path, err)
 				importErrors = true
+
 				continue
 			}
 			// TODO(gri) If a local package name != "." is provided,
@@ -159,12 +163,12 @@ func NewPackage(fset *token.FileSet, files map[string]*File, importer Importer, 
 				file.Unresolved[i] = ident
 				i++
 			}
-
 		}
 		file.Unresolved = file.Unresolved[0:i]
 		pkgScope.Outer = universe // reset universe scope
 	}
 
 	p.errors.Sort()
-	return &Package{pkgName, pkgScope, imports, files}, p.errors.Err()
+
+	return &Package{Name: pkgName, Scope: pkgScope, Imports: imports, Files: files}, p.errors.Err()
 }

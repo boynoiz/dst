@@ -1,21 +1,23 @@
 package gopackages_test
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/dave/dst/decorator/resolver"
-	"github.com/dave/dst/decorator/resolver/gopackages"
+	"github.com/boynoiz/dst/decorator/resolver"
+	"github.com/boynoiz/dst/decorator/resolver/gopackages"
 )
 
 func TestRestorerResolver(t *testing.T) {
 	type tc struct{ importPath, fromDir, expectName string }
 	tests := []struct {
-		skip, solo bool
-		name       string
-		resolve    func() (end func(), root string, r *gopackages.RestorerResolver)
-		cases      []tc
+		resolve func() (end func(), root string, r *gopackages.RestorerResolver)
+		name    string
+		cases   []tc
+		skip    bool
+		solo    bool
 	}{
 		{
 			name: "gopackages.Resolver",
@@ -32,6 +34,7 @@ func TestRestorerResolver(t *testing.T) {
 				}
 				end = func() { os.RemoveAll(root) }
 				r = &gopackages.RestorerResolver{}
+
 				return
 			},
 			cases: []tc{
@@ -43,6 +46,7 @@ func TestRestorerResolver(t *testing.T) {
 	for _, test := range tests {
 		if test.solo {
 			solo = true
+
 			break
 		}
 	}
@@ -62,7 +66,7 @@ func TestRestorerResolver(t *testing.T) {
 				if end != nil {
 					end() // delete temp dir if created
 				}
-				if err == resolver.ErrPackageNotFound {
+				if errors.Is(err, resolver.ErrPackageNotFound) {
 					name = ""
 				} else if err != nil {
 					t.Errorf("error resolving path %s from dir %s: %v", c.importPath, fromDir, err)

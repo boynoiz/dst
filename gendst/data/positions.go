@@ -3,113 +3,109 @@
 
 // notest
 
-// ImportSpec
-import (
-	/*Start*/ fmt /*Name*/ "fmt" /*End*/
-)
-
 // --
 
 var a []int
 var i = 1
 var b bool
-var f interface{} = 1
+var f any = 1
 var p = &i
 var c chan int
 
-// Field
+// Field.
 type A struct {
 	/*Start*/ A int /*Type*/ `a:"a"` /*End*/
 }
 
-// FieldList
-type A1 struct /*Start*/ { /*Opening*/
-	a, b int
-	c    string
+// FieldList.
+type A1 struct {
+	c string
+	a int
+	b int
 } /*End*/
 
-// Ellipsis
+// Ellipsis.
 func B(a /*Start*/ ... /*Ellipsis*/ int /*End*/) {}
 
-// FuncLit
+// FuncLit.
 var C = /*Start*/ func(a int, b ...int) (c int) /*Type*/ { return 0 } /*End*/
 
-// CompositeLit
+// CompositeLit.
 var D = /*Start*/ A /*Type*/ { /*Lbrace*/ A: 0} /*End*/
 
-// ParenExpr
+// ParenExpr.
 var E = /*Start*/ ( /*Lparen*/ 1 + 1 /*X*/) /*End*/ / 2
 
-// SelectorExpr
+// SelectorExpr.
 var F = /*Start*/ tt. /*X*/ F /*End*/ ()
 
-// IndexExpr
+// IndexExpr.
 var G = /*Start*/ []int{0} /*X*/ [ /*Lbrack*/ 0 /*Index*/] /*End*/
 
-// SliceExpr(0)
+// SliceExpr(0).
 var H = /*Start*/ []int{0, 1, 2} /*X*/ [ /*Lbrack*/ 1: /*Low*/ 2: /*High*/ 3 /*Max*/] /*End*/
 
-// SliceExpr(1)
+// SliceExpr(1).
 var H1 = /*Start*/ []int{0, 1, 2} /*X*/ [ /*Lbrack*/ 1: /*Low*/ 2 /*High*/] /*End*/
 
-// SliceExpr(2)
-var H2 = /*Start*/ []int{0} /*X*/ [: /*Low*/] /*End*/
+// SliceExpr(2).
+var H2 = /*Start*/ []int{0} /*End*/
 
-// SliceExpr(3)
+// SliceExpr(3).
 var H3 = /*Start*/ []int{0} /*X*/ [ /*Lbrack*/ 1: /*Low*/] /*End*/
 
-// SliceExpr(4)
+// SliceExpr(4).
 var H4 = /*Start*/ []int{0, 1, 2} /*X*/ [: /*Low*/ 2 /*High*/] /*End*/
 
-// SliceExpr(5)
+// SliceExpr(5).
 var H5 = /*Start*/ []int{0, 1, 2} /*X*/ [: /*Low*/ 2: /*High*/ 3 /*Max*/] /*End*/
 
-// TypeAssertExpr
+// TypeAssertExpr.
 var J = /*Start*/ f. /*X*/ ( /*Lparen*/ int /*Type*/) /*End*/
 
-// CallExpr
+// CallExpr.
 var L = /*Start*/ C /*Fun*/ ( /*Lparen*/ 0, []int{}... /*Ellipsis*/) /*End*/
 
-// StarExpr
+// StarExpr.
 var N = /*Start*/ * /*Star*/ p /*End*/
 
-// UnaryExpr
+// UnaryExpr.
 var O = /*Start*/ ^ /*Op*/ 1 /*End*/
 
-// BinaryExpr
+// BinaryExpr.
 var P = /*Start*/ 1 /*X*/ & /*Op*/ 2 /*End*/
 
-// KeyValueExpr
+// KeyValueExpr.
 var Q = map[string]string{
 	/*Start*/ "a" /*Key*/ : /*Colon*/ "a", /*End*/
 }
 
-// ArrayType
+// ArrayType.
 type R /*Start*/ [ /*Lbrack*/ 1] /*Len*/ int /*End*/
 
-// StructType
+// StructType.
 type S /*Start*/ struct /*Struct*/ {
 	A int
 } /*End*/
 
-// FuncType
+// FuncType.
 type T /*Start*/ func /*Func*/ (a int) /*Params*/ (b int) /*End*/
 
-// InterfaceType
+// InterfaceType.
 type U /*Start*/ interface /*Interface*/ {
 	A()
 } /*End*/
 
-// MapType
+// MapType.
 type V /*Start*/ map[ /*Map*/ int] /*Key*/ int /*End*/
 
-// ChanType(0)
+// ChanType(0).
 type W /*Start*/ chan /*Begin*/ int /*End*/
 
-// ChanType(1)
+// ChanType(1).
 type X /*Start*/ <-chan /*Begin*/ int /*End*/
 
-// ChanType(2)
+// ChanType(2).
 type Y /*Start*/ chan /*Begin*/ <- /*Arrow*/ int /*End*/
 
 // --
@@ -120,17 +116,11 @@ func Z() {
 A /*Label*/ : /*Colon*/
 	print("Stmt") /*End*/
 
-	// BranchStmt
-	/*Start*/
-	goto /*Tok*/ A /*End*/
-
 	// Ident(0)
 	/*Start*/
-	i /*End*/ ++
 
 	// Ident(1)
 	/*Start*/
-	fmt. /*X*/ Print /*End*/ ()
 
 	// SendStmt
 	/*Start*/
@@ -217,25 +207,17 @@ A /*Label*/ : /*Colon*/
 	// SelectStmt
 	/*Start*/
 	select /*Select*/ {
+	default:
 	} /*End*/
 
 	// ForStmt(0)
 	/*Start*/
-	for /*For*/ {
-		i++
-	} /*End*/
 
 	// ForStmt(1)
 	/*Start*/
-	for /*For*/ i < 1 /*Cond*/ {
-		i++
-	} /*End*/
 
 	// ForStmt(2)
 	/*Start*/
-	for /*For*/ i = 0; /*Init*/ i < 10; /*Cond*/ i++ /*Post*/ {
-		i++
-	} /*End*/
 
 	// RangeStmt(0)
 	/*Start*/
@@ -266,7 +248,7 @@ A /*Label*/ : /*Colon*/
 
 	// ValueSpec(2)
 	var (
-		/*Start*/ m, n int = /*Assign*/ 1, 2 /*End*/
+		/*Start*/ m, n = /*Assign*/ 1, 2 /*End*/
 	)
 
 	// --
@@ -305,28 +287,32 @@ A /*Label*/ : /*Colon*/
 	// --
 
 	print(T4)
+
+	// BranchStmt
+	/*Start*/
+	goto /*Tok*/ A /*End*/
 }
 
 // FuncDecl(0)
-/*Start*/
+/*Start.*/
 func /*Func*/ d /*Name*/ (d, e int) /*Params*/ {
 	return
 } /*End*/
 
 // FuncDecl(1)
-/*Start*/
+/*Start.*/
 func /*Func*/ TP /*Name*/ [P any] /*TypeParams*/ (a int) /*Params*/ (b P) /*Results*/ {
 	return b
 } /*End*/
 
 // FuncDecl(2)
-/*Start*/
+/*Start.*/
 func /*Func*/ (a *A) /*Recv*/ e /*Name*/ (d, e int) /*Params*/ {
 	return
 } /*End*/
 
 // FuncDecl(3)
-/*Start*/
+/*Start.*/
 func /*Func*/ (a *A) /*Recv*/ f /*Name*/ (d, e int) /*Params*/ (f, g int) /*Results*/ {
 	return
 } /*End*/
