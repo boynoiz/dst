@@ -56,7 +56,7 @@ var H = /*Start*/ []int{0, 1, 2} /*X*/ [ /*Lbrack*/ 1: /*Low*/ 2: /*High*/ 3 /*M
 var H1 = /*Start*/ []int{0, 1, 2} /*X*/ [ /*Lbrack*/ 1: /*Low*/ 2 /*High*/] /*End*/
 
 // SliceExpr(2).
-var H2 = /*Start*/ []int{0} /*End*/
+var H2 = /*Start*/ []int{0} /*X*/ [: /*Low*/] /*End*/
 
 // SliceExpr(3).
 var H3 = /*Start*/ []int{0} /*X*/ [ /*Lbrack*/ 1: /*Low*/] /*End*/
@@ -257,19 +257,19 @@ A /*Label*/ : /*Colon*/
 	} /*End*/
 
 	// ValueSpec(0)
-
-	/*Start*/
-	j := /*Assign*/ 1 /*End*/
+	var (
+		/*Start*/ j = /*Assign*/ 1 /*End*/
+	)
 
 	// ValueSpec(1)
-
-	/*Start*/
-	k, l := /*Assign*/ 1, 2 /*End*/
+	var (
+		/*Start*/ k, l = /*Assign*/ 1, 2 /*End*/
+	)
 
 	// ValueSpec(2)
-
-	/*Start*/
-	m, n := /*Assign*/ 1, 2 /*End*/
+	var (
+		/*Start*/ m, n int = /*Assign*/ 1, 2 /*End*/
+	)
 
 	// --
 

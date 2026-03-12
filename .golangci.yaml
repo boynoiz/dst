@@ -92,6 +92,7 @@ linters:
       - examples$
       - .*mock.*
       - .*_mock.*
+      - gendst/data  # test fixture data with intentional code patterns
 formatters:
   enable:
     - gci
@@ -121,3 +122,4 @@ formatters:
       - third_party$
       - builtin$
       - examples$
+      - gendst/data  # test fixture data with intentional code patterns
